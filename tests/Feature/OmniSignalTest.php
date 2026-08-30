@@ -26,6 +26,20 @@ class OmniSignalTest extends TestCase
         $response->assertSee('omnisignal.dev');
     }
 
+    public function test_docs_knowledge_base_renders_successfully(): void
+    {
+        $response = $this->get('/docs');
+
+        $response->assertOk();
+        $response->assertSee('Knowledge Base');
+        $response->assertSee('Quickstart');
+        $response->assertSee('Google Ads Offline Conversions');
+        $response->assertSee('Meta');
+
+        $kbRedirect = $this->get('/kb');
+        $kbRedirect->assertRedirect('/docs');
+    }
+
     public function test_dashboard_renders_successfully(): void
     {
         Lead::create([
