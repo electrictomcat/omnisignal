@@ -8,17 +8,39 @@ return [
     |--------------------------------------------------------------------------
     */
 
+    /*
+    |--------------------------------------------------------------------------
+    | Lemon Squeezy (merchant of record)
+    |--------------------------------------------------------------------------
+    |
+    | Every store, product and variant identifier comes from the environment.
+    | They were previously inlined as literals here and in the webhook handler,
+    | which meant renaming a product in Lemon Squeezy silently reassigned
+    | customers to the wrong tier.
+    |
+    */
+
     'lemonsqueezy' => [
         'api_key' => env('LEMON_SQUEEZY_API_KEY'),
-        'store_id' => env('LEMON_SQUEEZY_STORE_ID', '463287'),
+        'store_id' => env('LEMON_SQUEEZY_STORE_ID'),
+        'store_url' => env('LEMON_SQUEEZY_STORE_URL', 'https://omnisignal.lemonsqueezy.com'),
         'signing_secret' => env('LEMON_SQUEEZY_SIGNING_SECRET'),
+
         'variants' => [
-            'starter' => env('LEMON_SQUEEZY_STARTER_SUBSCRIPTION', env('LEMON_SQUEEZY_VARIANT_STARTER', '2076021')),
-            'starter_onetime' => env('LEMON_SQUEEZY_STARTER_ONE_TIME', '2076019'),
-            'pro' => env('LEMON_SQUEEZY_PRO_SUBSCRIPTION', env('LEMON_SQUEEZY_VARIANT_PRO', '2076026')),
-            'pro_onetime' => env('LEMON_SQUEEZY_PRO_ONE_TIME', '2076025'),
-            'agency' => env('LEMON_SQUEEZY_AGENCY_SUBSCRIPTION', env('LEMON_SQUEEZY_VARIANT_AGENCY', '2076033')),
-            'agency_onetime' => env('LEMON_SQUEEZY_AGENCY_ONE_TIME', '2076032'),
+            'starter' => env('LEMON_SQUEEZY_STARTER_SUBSCRIPTION'),
+            'starter_onetime' => env('LEMON_SQUEEZY_STARTER_ONE_TIME'),
+            'pro' => env('LEMON_SQUEEZY_PRO_SUBSCRIPTION'),
+            'pro_onetime' => env('LEMON_SQUEEZY_PRO_ONE_TIME'),
+            'agency' => env('LEMON_SQUEEZY_AGENCY_SUBSCRIPTION'),
+            'agency_onetime' => env('LEMON_SQUEEZY_AGENCY_ONE_TIME'),
+        ],
+
+        // Optional: used as a fallback when an order carries a product ID but
+        // no recognised variant.
+        'products' => [
+            'starter' => env('LEMON_SQUEEZY_STARTER_PRODUCT'),
+            'pro' => env('LEMON_SQUEEZY_PRO_PRODUCT'),
+            'agency' => env('LEMON_SQUEEZY_AGENCY_PRODUCT'),
         ],
     ],
 
