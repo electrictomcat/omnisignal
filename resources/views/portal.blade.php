@@ -193,6 +193,64 @@
                                 @endif
                             </div>
 
+                            {{-- Hosted ad-platform connections --}}
+                            <div class="mt-8">
+                                <h3 class="text-sm font-bold text-slate-300 uppercase tracking-wider font-mono mb-3">
+                                    Ad platform connections
+                                </h3>
+
+                                @php($google = $license->connections->firstWhere('channel', 'google'))
+
+                                <div class="rounded-xl bg-[#080d16] border border-slate-800 px-4 py-3 flex items-center justify-between gap-4 text-sm">
+                                    <div>
+                                        <div class="text-slate-300 font-semibold">Google Ads</div>
+                                        @if($google && $google->isUsable())
+                                            <div class="text-xs text-slate-500 mt-0.5">
+                                                {{ $google->account_name ?: $google->account_id }}
+                                                <span class="font-mono">({{ $google->account_id }})</span>
+                                            </div>
+                                        @elseif($google && $google->status === 'needs_reauth')
+                                            <div class="text-xs text-amber-400 mt-0.5">
+                                                Needs reconnecting &mdash; {{ $google->last_error }}
+                                            </div>
+                                        @elseif($google)
+                                            <div class="text-xs text-amber-400 mt-0.5">Authorised, but no account chosen yet.</div>
+                                        @else
+                                            <div class="text-xs text-slate-500 mt-0.5">
+                                                Not connected. Google Ads uploads run through us because they need
+                                                credentials that cannot ship in a plugin.
+                                            </div>
+                                        @endif
+                                    </div>
+
+                                    <div class="flex items-center gap-3 shrink-0">
+                                        @if($google && $google->isUsable())
+                                            <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                                                ● Connected
+                                            </span>
+                                            <form method="POST" action="{{ route('portal.connect.destroy', $google) }}"
+                                                  onsubmit="return confirm('Disconnect Google Ads? Stored credentials are deleted immediately.');">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="text-xs text-rose-400 hover:text-rose-300 hover:underline">
+                                                    Disconnect
+                                                </button>
+                                            </form>
+                                        @elseif($google)
+                                            <a href="{{ route('portal.connect.google.setup', $google) }}"
+                                               class="px-3.5 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold transition">
+                                                Finish setup
+                                            </a>
+                                        @else
+                                            <a href="{{ route('portal.connect.google', $license) }}"
+                                               class="px-3.5 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-bold transition">
+                                                Connect
+                                            </a>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+
                             <!-- Lemon Squeezy Customer Management Action Links -->
                             <div class="mt-8 pt-6 border-t border-slate-800 flex flex-wrap items-center justify-between gap-4 text-xs">
                                 <div class="flex items-center gap-4">

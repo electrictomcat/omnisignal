@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ChannelConnectionController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\PortalController;
 use App\Http\Controllers\WebhookController;
@@ -44,6 +45,36 @@ Route::post('/portal/deactivate', [PortalController::class, 'deactivateDomain'])
 
 Route::get('/account', function () {
     return redirect()->route('portal');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Hosted ad-platform connections
+|--------------------------------------------------------------------------
+|
+| Google Ads needs an OAuth client secret and a developer token, neither of
+| which can ship inside a GPL WordPress plugin. The customer authorises here
+| instead and we upload on their behalf. Every route requires the portal
+| session established by the emailed signed link.
+|
+*/
+Route::prefix('portal/connect')->name('portal.connect.')->group(function () {
+    Route::get('google/{license}', [ChannelConnectionController::class, 'connect'])
+        ->middleware('throttle:10,1')
+        ->name('google');
+
+    Route::get('google/callback/oauth', [ChannelConnectionController::class, 'callback'])
+        ->name('google.callback');
+
+    Route::get('{connection}/setup', [ChannelConnectionController::class, 'setup'])
+        ->name('google.setup');
+
+    Route::post('{connection}/setup', [ChannelConnectionController::class, 'store'])
+        ->middleware('throttle:20,1')
+        ->name('google.store');
+
+    Route::delete('{connection}', [ChannelConnectionController::class, 'destroy'])
+        ->name('destroy');
 });
 
 // Post-purchase landing page. Buyers used to be sent to the internal

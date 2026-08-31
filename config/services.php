@@ -44,6 +44,27 @@ return [
         ],
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Google Ads (hosted connector)
+    |--------------------------------------------------------------------------
+    |
+    | Our own OAuth application and developer token, used to upload on a
+    | customer's behalf after they authorise their account in the portal.
+    | These are deliberately not per-tenant: the client secret cannot ship in
+    | a GPL plugin, and the developer token is issued against our manager
+    | account rather than each customer's.
+    |
+    */
+
+    'google_ads' => [
+        'client_id' => env('GOOGLE_ADS_OAUTH_CLIENT_ID'),
+        'client_secret' => env('GOOGLE_ADS_OAUTH_CLIENT_SECRET'),
+        'developer_token' => env('GOOGLE_ADS_DEVELOPER_TOKEN'),
+        'login_customer_id' => env('GOOGLE_ADS_LOGIN_CUSTOMER_ID'),
+        'api_version' => env('GOOGLE_ADS_API_VERSION', 'v23'),
+    ],
+
     'postmark' => [
         'key' => env('POSTMARK_API_KEY'),
     ],

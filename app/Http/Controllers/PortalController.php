@@ -72,6 +72,7 @@ class PortalController extends Controller
         $email = strtolower(trim((string) $request->query('email')));
 
         $licenses = License::query()
+            ->with('connections')
             ->where('customer_email', $email)
             ->latest()
             ->get();

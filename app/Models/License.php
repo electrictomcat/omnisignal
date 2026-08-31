@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -33,6 +34,30 @@ class License extends Model
         'activation_limit' => 'integer',
         'activation_count' => 'integer',
     ];
+
+    /**
+     * Ad-platform accounts connected to this licence.
+     *
+     * @return HasMany<ChannelConnection, $this>
+     */
+    public function connections(): HasMany
+    {
+        return $this->hasMany(ChannelConnection::class);
+    }
+
+    /**
+     * Channels we upload for on this customer's behalf.
+     *
+     * @return array<int, string>
+     */
+    public function hostedChannels(): array
+    {
+        return $this->connections
+            ->filter(fn (ChannelConnection $connection) => $connection->isUsable())
+            ->pluck('channel')
+            ->values()
+            ->all();
+    }
 
     public static function generateKey(): string
     {
