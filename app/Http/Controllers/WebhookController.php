@@ -40,6 +40,8 @@ class WebhookController extends Controller
                 break;
             case 'subscription_created':
             case 'subscription_updated':
+            case 'subscription_cancelled':
+            case 'subscription_expired':
                 $this->handleSubscriptionEvent($attributes);
                 break;
         }
@@ -53,10 +55,23 @@ class WebhookController extends Controller
      */
     protected function handleOrderCreated(array $attributes, array $customData): void
     {
-        $orderId = (string) ($attributes['identifier'] ?? $attributes['first_order_item']['order_id'] ?? '');
+        $orderId = (string) ($attributes['identifier'] ?? $attributes['first_order_item']['order_id'] ?? $attributes['order_number'] ?? '');
         $email = strtolower(trim((string) ($attributes['user_email'] ?? $attributes['customer_email'] ?? '')));
         $name = (string) ($attributes['user_name'] ?? $attributes['customer_name'] ?? '');
-        $tier = (string) ($customData['tier'] ?? 'pro');
+        
+        $variantId = (string) ($attributes['first_order_item']['variant_id'] ?? '');
+        $productId = (string) ($attributes['first_order_item']['product_id'] ?? '');
+        $productName = strtolower((string) ($attributes['first_order_item']['product_name'] ?? ''));
+
+        // Determine tier
+        $tier = 'pro';
+        if (! empty($customData['tier'])) {
+            $tier = strtolower(trim($customData['tier']));
+        } elseif (str_contains($productName, 'starter') || in_array($variantId, ['2076019', '2076021', '2076023'], true) || $productId === '1328315') {
+            $tier = 'starter';
+        } elseif (str_contains($productName, 'agency') || in_array($variantId, ['2076031', '2076032', '2076033'], true) || $productId === '1328321') {
+            $tier = 'agency';
+        }
 
         $limits = [
             'starter' => 1,
@@ -65,7 +80,7 @@ class WebhookController extends Controller
         ];
         $limit = $limits[$tier] ?? 5;
 
-        // Generate or retrieve license
+        // Generate default license key if not provided directly in order payload
         $licenseKey = License::generateKey();
 
         License::updateOrCreate(
@@ -73,6 +88,8 @@ class WebhookController extends Controller
             [
                 'customer_email' => $email,
                 'customer_name' => $name,
+                'product_id' => $productId ?: null,
+                'variant_id' => $variantId ?: null,
                 'tier' => $tier,
                 'license_key' => $licenseKey,
                 'status' => 'active',
@@ -81,7 +98,7 @@ class WebhookController extends Controller
             ]
         );
 
-        Log::info("[LemonSqueezy Webhook] Created license for order {$orderId} ({$email})");
+        Log::info("[LemonSqueezy Webhook] Created {$tier} license for order {$orderId} ({$email}) with limit {$limit}");
     }
 
     /**
@@ -93,11 +110,12 @@ class WebhookController extends Controller
         $orderId = (string) ($attributes['order_id'] ?? '');
         $activationLimit = (int) ($attributes['activation_limit'] ?? 1);
 
-        if ($key) {
+        if ($key && $orderId) {
             License::where('order_id', $orderId)->update([
                 'license_key' => $key,
                 'activation_limit' => $activationLimit,
             ]);
+            Log::info("[LemonSqueezy Webhook] Updated native license key for order {$orderId}");
         }
     }
 
@@ -113,6 +131,7 @@ class WebhookController extends Controller
             License::where('order_id', $orderId)->update([
                 'status' => $status === 'active' ? 'active' : 'inactive',
             ]);
+            Log::info("[LemonSqueezy Webhook] Updated license subscription status to {$status} for order {$orderId}");
         }
     }
 }

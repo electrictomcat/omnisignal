@@ -13,9 +13,12 @@ return [
         'store_id' => env('LEMON_SQUEEZY_STORE_ID', '463287'),
         'signing_secret' => env('LEMON_SQUEEZY_SIGNING_SECRET'),
         'variants' => [
-            'starter' => env('LEMON_SQUEEZY_VARIANT_STARTER'),
-            'pro' => env('LEMON_SQUEEZY_VARIANT_PRO'),
-            'agency' => env('LEMON_SQUEEZY_VARIANT_AGENCY'),
+            'starter' => env('LEMON_SQUEEZY_STARTER_SUBSCRIPTION', env('LEMON_SQUEEZY_VARIANT_STARTER', '2076021')),
+            'starter_onetime' => env('LEMON_SQUEEZY_STARTER_ONE_TIME', '2076019'),
+            'pro' => env('LEMON_SQUEEZY_PRO_SUBSCRIPTION', env('LEMON_SQUEEZY_VARIANT_PRO', '2076026')),
+            'pro_onetime' => env('LEMON_SQUEEZY_PRO_ONE_TIME', '2076025'),
+            'agency' => env('LEMON_SQUEEZY_AGENCY_SUBSCRIPTION', env('LEMON_SQUEEZY_VARIANT_AGENCY', '2076033')),
+            'agency_onetime' => env('LEMON_SQUEEZY_AGENCY_ONE_TIME', '2076032'),
         ],
     ],
 

@@ -328,7 +328,7 @@
                             <h3 class="text-xl font-bold text-white">Starter</h3>
                             <p class="text-xs text-slate-400 mt-1">For single Laravel or WooCommerce stores</p>
                             <div class="mt-6 flex items-baseline gap-1">
-                                <span class="text-4xl font-extrabold text-white">$99</span>
+                                <span class="text-4xl font-extrabold text-white">$85</span>
                                 <span class="text-sm text-slate-400 font-medium">/ year</span>
                             </div>
 
@@ -353,7 +353,7 @@
                             <h3 class="text-xl font-bold text-white">Pro Developer</h3>
                             <p class="text-xs text-slate-400 mt-1">For indie creators and multi-project teams</p>
                             <div class="mt-6 flex items-baseline gap-1">
-                                <span class="text-4xl font-extrabold text-emerald-400">$199</span>
+                                <span class="text-4xl font-extrabold text-emerald-400">$160</span>
                                 <span class="text-sm text-slate-400 font-medium">/ year</span>
                             </div>
 
@@ -376,7 +376,7 @@
                             <h3 class="text-xl font-bold text-white">Agency Zen</h3>
                             <p class="text-xs text-slate-400 mt-1">For digital marketing & dev agencies</p>
                             <div class="mt-6 flex items-baseline gap-1">
-                                <span class="text-4xl font-extrabold text-white">$399</span>
+                                <span class="text-4xl font-extrabold text-white">$300</span>
                                 <span class="text-sm text-slate-400 font-medium">/ year</span>
                             </div>
 
