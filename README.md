@@ -1,58 +1,129 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# OmniSignal
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Server-side offline conversion tracking — the application behind
+[omnisignal.dev](https://omnisignal.dev).
 
-## About Laravel
+This repository holds three things:
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+| Path | What it is |
+| :-- | :-- |
+| `app/`, `routes/`, `resources/` | The Laravel app: marketing site, licence portal, Lemon Squeezy checkout and webhooks |
+| `packages/php-sdk/` | `omnisignal/php-sdk` — a dependency-free PHP client for the five ad channels |
+| `packages/wp-omnisignal/` | The WordPress / WooCommerce plugin |
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+The conversion engine itself is **not** here. It lives in
+[`electrictomcat/laravel-google-ads-conversions`](https://github.com/electrictomcat/laravel-google-ads-conversions)
+and is consumed as a Composer dependency. `app/OmniSignal/` contains only what
+is specific to this application (the plugin builder, the test-event command and
+the Stripe listener).
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## Local setup
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+The app depends on the conversion engine through a **path repository**, so the
+package has to be checked out beside this repository:
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
-
-```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+```
+Code/
+├── omnisignal/
+└── laravel-google-ads-conversions/
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+```bash
+git clone git@github.com:electrictomcat/laravel-google-ads-conversions.git ../laravel-google-ads-conversions
 
-## Contributing
+composer install
+cp .env.example .env
+php artisan key:generate
+php artisan migrate
+npm install && npm run build
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### Deploying
 
-## Code of Conduct
+> The path repository above is for local development only. It will not resolve
+> on a build server that has not checked the package out beside the app.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+For production, point Composer at the published package instead:
 
-## Security Vulnerabilities
+```bash
+composer config --unset repositories.laravel-google-ads-conversions
+composer require electrictomcat/laravel-google-ads-conversions:^2.0
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Until v2.0.0 is tagged on Packagist, use a VCS repository against the Git tag:
+
+```json
+"repositories": [
+    {
+        "type": "vcs",
+        "url": "https://github.com/electrictomcat/laravel-google-ads-conversions"
+    }
+]
+```
+
+CI checks the package out alongside the app (see `.github/workflows/ci.yml`).
+
+---
+
+## Required configuration
+
+Copy `.env.example` and fill it in. Two entries are not optional in production:
+
+- **`LEMON_SQUEEZY_SIGNING_SECRET`** — webhooks are rejected outright when this
+  is unset. Without it, anyone who can POST to `/webhooks/lemonsqueezy` could
+  otherwise mint themselves a licence.
+- **`SESSION_SECURE_COOKIE=true`** — the session cookie carries portal access.
+
+Mail must also work: the licence portal proves ownership by emailing a signed
+link, so a broken mailer means customers cannot reach their keys.
+
+---
+
+## Routes worth knowing
+
+| Route | Access |
+| :-- | :-- |
+| `/` `/docs` `/terms` `/privacy` `/refunds` | Public |
+| `/portal` | Public form; emails a signed link. Reveals nothing itself |
+| `/portal/licences` | Signed link only, 30-minute expiry |
+| `/thanks` | Post-checkout receipt page |
+| `/api/v1/licenses/*` | Throttled per IP and per key |
+| `/webhooks/lemonsqueezy` | HMAC-verified |
+| `/ad-conversions` | Disabled unless `AD_CONVERSIONS_DASHBOARD_ENABLED=true`; HTTP Basic against the users table |
+
+---
+
+## Commands
+
+```bash
+php artisan ad-conversions:install    # publish config, report channel readiness
+php artisan ad-conversions:test       # verify every channel against its live API
+php artisan ad-conversions:upload     # flush the buffer and upload pending conversions
+php artisan omnisignal:test-event     # send one live or test conversion
+php artisan omnisignal:build-plugin   # package the WordPress plugin into public/downloads/
+```
+
+The scheduled work is `UploadPendingConversions` (hourly) and `model:prune` for
+retention.
+
+---
+
+## Checks
+
+```bash
+php artisan test          # feature and unit suite
+vendor/bin/phpstan        # static analysis
+vendor/bin/pint --test    # formatting
+npm run build             # frontend assets
+```
+
+All four run in CI on push and pull request.
+
+---
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Proprietary. The `packages/php-sdk` directory is MIT; the WordPress plugin is
+GPLv2 or later.
