@@ -320,10 +320,64 @@
         <!-- Pricing Section -->
         <section id="pricing" class="py-24 border-t border-slate-800/80 bg-[#080d16] scroll-mt-20">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                <h2 class="text-3xl sm:text-4xl font-extrabold text-white">Serene, transparent pricing.</h2>
-                <p class="mt-3 text-slate-400 max-w-xl mx-auto">One investment. Infinite attribution peace of mind. Sold via LemonSqueezy with instant Composer access.</p>
+                
+                <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-emerald-500/10 text-xs font-semibold text-emerald-400 mb-4 border border-emerald-500/20">
+                    <span>💎 Transparent Value Matrix</span>
+                </div>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-white">Free Community Core & Pro Superpowers</h2>
+                <p class="mt-3 text-slate-400 max-w-2xl mx-auto">Start free with our open-source Google Ads engine, or attain total multi-network nirvana with OmniSignal Pro.</p>
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16 text-left">
+                <!-- Free vs Pro Comparison Matrix -->
+                <div class="max-w-4xl mx-auto mt-12 mb-16 rounded-2xl bg-slate-900/60 border border-slate-800 overflow-hidden text-left shadow-xl">
+                    <table class="min-w-full divide-y divide-slate-800 text-sm">
+                        <thead class="bg-slate-950/80 text-xs font-mono text-slate-400 uppercase">
+                            <tr>
+                                <th class="py-3.5 px-6 font-semibold">Capability</th>
+                                <th class="py-3.5 px-6 font-semibold text-slate-300">Free Community Edition</th>
+                                <th class="py-3.5 px-6 font-semibold text-emerald-400">OmniSignal Pro ॐ</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-800/60 text-slate-300 text-xs sm:text-sm">
+                            <tr>
+                                <td class="py-3.5 px-6 font-medium">Google Ads Offline Conversions</td>
+                                <td class="py-3.5 px-6 text-emerald-400 font-semibold">✓ Included Free</td>
+                                <td class="py-3.5 px-6 text-emerald-400 font-semibold">✓ Included</td>
+                            </tr>
+                            <tr>
+                                <td class="py-3.5 px-6 font-medium">Meta CAPI (Facebook & Instagram v20.0)</td>
+                                <td class="py-3.5 px-6 text-slate-600">—</td>
+                                <td class="py-3.5 px-6 text-emerald-400 font-semibold">✓ Full Fan-Out</td>
+                            </tr>
+                            <tr>
+                                <td class="py-3.5 px-6 font-medium">TikTok, LinkedIn & Microsoft Ads</td>
+                                <td class="py-3.5 px-6 text-slate-600">—</td>
+                                <td class="py-3.5 px-6 text-emerald-400 font-semibold">✓ All 5 Networks</td>
+                            </tr>
+                            <tr>
+                                <td class="py-3.5 px-6 font-medium">In-App Analytics & Conversion Stream Dashboard</td>
+                                <td class="py-3.5 px-6 text-slate-600">—</td>
+                                <td class="py-3.5 px-6 text-emerald-400 font-semibold">✓ Real-Time Stream</td>
+                            </tr>
+                            <tr>
+                                <td class="py-3.5 px-6 font-medium">WordPress & WooCommerce Turnkey Plugin</td>
+                                <td class="py-3.5 px-6 text-slate-400">Google Ads Only</td>
+                                <td class="py-3.5 px-6 text-emerald-400 font-semibold">✓ Full Funnel + Forms</td>
+                            </tr>
+                            <tr>
+                                <td class="py-3.5 px-6 font-medium">Auto Form Lead Capture (CF7, WPForms, Elementor)</td>
+                                <td class="py-3.5 px-6 text-slate-600">—</td>
+                                <td class="py-3.5 px-6 text-emerald-400 font-semibold">✓ 6 Form Builders</td>
+                            </tr>
+                            <tr>
+                                <td class="py-3.5 px-6 font-medium">Stripe & LemonSqueezy Webhook Conversion Listeners</td>
+                                <td class="py-3.5 px-6 text-slate-600">—</td>
+                                <td class="py-3.5 px-6 text-emerald-400 font-semibold">✓ Included</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
                     <!-- Starter -->
                     <div class="rounded-3xl bg-slate-900/60 p-8 border border-slate-800 hover:border-slate-700 transition flex flex-col justify-between">
                         <div>

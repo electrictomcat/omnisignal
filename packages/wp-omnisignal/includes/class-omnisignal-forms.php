@@ -19,6 +19,12 @@ class OmniSignal_Forms
 
         // 4. Elementor Pro Forms
         add_action('elementor_pro/forms/new_record', [__CLASS__, 'on_elementor_submit'], 10, 2);
+
+        // 5. Fluent Forms
+        add_action('fluentform/submission_inserted', [__CLASS__, 'on_fluent_forms_submit'], 10, 3);
+
+        // 6. Ninja Forms
+        add_action('ninja_forms_after_submission', [__CLASS__, 'on_ninja_forms_submit']);
     }
 
     public static function on_cf7_submit($contact_form): void
@@ -87,6 +93,32 @@ class OmniSignal_Forms
         self::dispatch_lead('Elementor Form', $email, $phone);
     }
 
+    public static function on_fluent_forms_submit(int $insert_id, array $form_data, $form): void
+    {
+        $email = $form_data['email'] ?? $form_data['user_email'] ?? null;
+        $phone = $form_data['phone'] ?? $form_data['phone_number'] ?? null;
+
+        self::dispatch_lead('Fluent Forms', $email, $phone);
+    }
+
+    public static function on_ninja_forms_submit(array $form_data): void
+    {
+        $fields = $form_data['fields'] ?? [];
+        $email = null;
+        $phone = null;
+
+        foreach ($fields as $field) {
+            $key = strtolower($field['key'] ?? '');
+            if (str_contains($key, 'email') && ! $email) {
+                $email = $field['value'] ?? null;
+            } elseif (str_contains($key, 'phone') && ! $phone) {
+                $phone = $field['value'] ?? null;
+            }
+        }
+
+        self::dispatch_lead('Ninja Forms', $email, $phone);
+    }
+
     private static function dispatch_lead(string $source, ?string $email, ?string $phone): void
     {
         if (! $email && ! $phone) {
@@ -113,5 +145,6 @@ class OmniSignal_Forms
         ];
 
         OmniSignal_API::send_conversion($payload);
+        OmniSignal_Admin::log_conversion($payload);
     }
 }
