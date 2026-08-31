@@ -2,8 +2,11 @@
 
 namespace App\Providers;
 
+use App\Listeners\ReportConversionFailure;
+use ElectricTomCat\GoogleAdsConversions\Events\ConversionUploadFailed;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
@@ -28,6 +31,9 @@ class AppServiceProvider extends ServiceProvider
         }
 
         $this->configureRateLimiting();
+
+        // A conversion the engine could not deliver has to reach a human.
+        Event::listen(ConversionUploadFailed::class, ReportConversionFailure::class);
     }
 
     /**
