@@ -12,8 +12,8 @@ class TestEventCommandTest extends TestCase
 
     public function test_test_event_command_runs_successfully(): void
     {
-        config()->set('omnisignal.meta.pixel_id', '123456');
-        config()->set('omnisignal.meta.access_token', 'META_TEST_TOKEN');
+        config()->set('google-ads-conversions.meta.pixel_id', '123456');
+        config()->set('google-ads-conversions.meta.access_token', 'META_TEST_TOKEN');
 
         Http::fake([
             'https://graph.facebook.com/*' => Http::response(['events_received' => 1], 200),

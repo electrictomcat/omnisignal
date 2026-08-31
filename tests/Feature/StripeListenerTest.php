@@ -2,8 +2,8 @@
 
 namespace Tests\Feature;
 
-use App\OmniSignal\Facades\GoogleAdsConversions;
 use App\OmniSignal\Listeners\OmniSignalStripeListener;
+use ElectricTomCat\GoogleAdsConversions\Facades\GoogleAdsConversions;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -15,7 +15,7 @@ class StripeListenerTest extends TestCase
     {
         GoogleAdsConversions::fake();
 
-        $listener = new OmniSignalStripeListener();
+        $listener = new OmniSignalStripeListener;
 
         $stripeEvent = [
             'type' => 'checkout.session.completed',

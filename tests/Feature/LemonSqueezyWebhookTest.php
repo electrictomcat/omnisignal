@@ -31,7 +31,7 @@ class LemonSqueezyWebhookTest extends TestCase
             ],
         ];
 
-        $response = $this->postJson('/webhooks/lemonsqueezy', $payload);
+        $response = $this->postSignedWebhook($payload);
         $response->assertOk();
 
         $this->assertDatabaseHas('licenses', [
@@ -64,7 +64,7 @@ class LemonSqueezyWebhookTest extends TestCase
             ],
         ];
 
-        $response = $this->postJson('/webhooks/lemonsqueezy', $payload);
+        $response = $this->postSignedWebhook($payload);
         $response->assertOk();
 
         $this->assertDatabaseHas('licenses', [
@@ -97,7 +97,7 @@ class LemonSqueezyWebhookTest extends TestCase
             ],
         ];
 
-        $response = $this->postJson('/webhooks/lemonsqueezy', $payload);
+        $response = $this->postSignedWebhook($payload);
         $response->assertOk();
 
         $license = License::where('order_id', 'ORD-AGENCY-003')->first();
@@ -130,7 +130,7 @@ class LemonSqueezyWebhookTest extends TestCase
             ],
         ];
 
-        $response = $this->postJson('/webhooks/lemonsqueezy', $payload);
+        $response = $this->postSignedWebhook($payload);
         $response->assertOk();
 
         $this->assertDatabaseHas('licenses', [
@@ -162,7 +162,7 @@ class LemonSqueezyWebhookTest extends TestCase
             ],
         ];
 
-        $response = $this->postJson('/webhooks/lemonsqueezy', $payload);
+        $response = $this->postSignedWebhook($payload);
         $response->assertOk();
 
         $this->assertDatabaseHas('licenses', [

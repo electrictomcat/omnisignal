@@ -36,7 +36,7 @@ class LemonSqueezyTest extends TestCase
             ],
         ];
 
-        $response = $this->postJson('/webhooks/lemonsqueezy', $payload);
+        $response = $this->postSignedWebhook($payload);
 
         $response->assertOk();
         $this->assertDatabaseHas('licenses', [

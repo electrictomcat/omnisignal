@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\License;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\URL;
 use Tests\TestCase;
 
 class PortalAndRefundTest extends TestCase
@@ -31,7 +32,18 @@ class PortalAndRefundTest extends TestCase
             'expires_at' => now()->addYear(),
         ]);
 
-        $response = $this->get('/portal?q=founder@startup.com');
+        // Access is proven by control of the purchase email, so the key is
+        // only rendered behind the signed link we mail out.
+        $this->get('/portal?q=founder@startup.com')
+            ->assertOk()
+            ->assertDontSee('OMNI-PORTAL-TEST-999');
+
+        $response = $this->get(URL::temporarySignedRoute(
+            'portal.show',
+            now()->addMinutes(30),
+            ['email' => 'founder@startup.com'],
+        ));
+
         $response->assertOk();
         $response->assertSee('OMNI-PORTAL-TEST-999');
         $response->assertSee('startup.com');
@@ -50,6 +62,13 @@ class PortalAndRefundTest extends TestCase
             'activation_count' => 2,
             'instances' => ['site1.com', 'site2.com'],
         ]);
+
+        // Establish the portal session the emailed link creates.
+        $this->get(URL::temporarySignedRoute(
+            'portal.show',
+            now()->addMinutes(30),
+            ['email' => 'dev@agency.com'],
+        ))->assertOk();
 
         $response = $this->post('/portal/deactivate', [
             'license_id' => $license->id,
@@ -88,7 +107,7 @@ class PortalAndRefundTest extends TestCase
             ],
         ];
 
-        $response = $this->postJson('/webhooks/lemonsqueezy', $payload);
+        $response = $this->postSignedWebhook($payload);
         $response->assertOk();
 
         $license->refresh();

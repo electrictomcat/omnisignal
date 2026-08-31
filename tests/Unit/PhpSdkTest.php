@@ -27,13 +27,18 @@ class PhpSdkTest extends TestCase
         $this->assertGreaterThan(0, $payload->timestamp);
     }
 
-    public function test_client_records_and_fans_out(): void
+    public function test_a_half_configured_channel_is_not_registered(): void
     {
+        // These drivers used to accept one credential and then report success
+        // for every conversion without making a request. A channel that cannot
+        // actually deliver must not be registered at all.
         $client = OmniSignalClient::create([
             'google' => ['customer_id' => '123-456-7890'],
             'microsoft' => ['customer_id' => '987654321', 'developer_token' => 'DEV_TOKEN'],
             'linkedin' => ['access_token' => 'LI_TOKEN'],
         ]);
+
+        $this->assertSame([], $client->activeChannels());
 
         $results = $client->record(
             eventName: 'Lead',
@@ -41,14 +46,26 @@ class PhpSdkTest extends TestCase
             currency: 'USD',
             orderId: 'LEAD-99',
             user: ['email' => 'client@agency.com'],
-            clickIds: ['gclid' => 'gclid_test', 'msclkid' => 'ms_test']
+            clickIds: ['gclid' => 'gclid_test', 'msclkid' => 'ms_test'],
         );
 
-        $this->assertArrayHasKey('google', $results);
-        $this->assertTrue($results['google']['success']);
-        $this->assertArrayHasKey('microsoft', $results);
-        $this->assertTrue($results['microsoft']['success']);
-        $this->assertArrayHasKey('linkedin', $results);
-        $this->assertTrue($results['linkedin']['success']);
+        $this->assertSame([], $results);
+    }
+
+    public function test_fully_configured_channels_are_registered(): void
+    {
+        $client = OmniSignalClient::create([
+            'google' => [
+                'developer_token' => 'DEV', 'client_id' => 'cid', 'client_secret' => 'sec',
+                'refresh_token' => 'ref', 'customer_id' => '123-456-7890', 'conversion_action' => '555',
+            ],
+            'microsoft' => [
+                'developer_token' => 'DEV', 'customer_id' => '987654321',
+                'account_id' => '111', 'access_token' => 'MS_TOKEN',
+            ],
+            'linkedin' => ['access_token' => 'LI_TOKEN', 'conversion_rule_id' => '42'],
+        ]);
+
+        $this->assertSame(['google', 'linkedin', 'microsoft'], $client->activeChannels());
     }
 }

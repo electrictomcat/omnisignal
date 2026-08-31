@@ -3,10 +3,8 @@
 namespace Tests\Feature;
 
 use App\Models\Lead;
-use App\OmniSignal\ConversionManager;
-use App\OmniSignal\DTO\ConversionPayload;
-use App\OmniSignal\Drivers\MetaCapiDriver;
-use App\OmniSignal\Facades\GoogleAdsConversions;
+use ElectricTomCat\GoogleAdsConversions\Drivers\MetaCapiDriver;
+use ElectricTomCat\GoogleAdsConversions\DTO\ConversionPayload;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
@@ -40,36 +38,17 @@ class OmniSignalTest extends TestCase
         $kbRedirect->assertRedirect('/docs');
     }
 
-    public function test_dashboard_renders_successfully(): void
+    public function test_dashboard_is_not_publicly_reachable(): void
     {
-        Lead::create([
-            'gclid' => 'gclid_test_123',
-            'conversions' => [
-                [
-                    'event' => 'Demo Booked',
-                    'value' => 250.00,
-                    'currency' => 'USD',
-                    'status' => 'uploaded',
-                    'timestamp' => now()->timestamp,
-                ],
-            ],
-        ]);
-
-        $response = $this->get('/ad-conversions');
-
-        $response->assertOk();
-        $response->assertSee('OmniSignal');
-        $response->assertSee('Demo Booked');
-        $response->assertSee('250.00');
-
-        $dashResponse = $this->get('/dashboard');
-        $dashResponse->assertOk();
+        // It shows lead counts, click identifiers and attributed revenue.
+        $this->get('/dashboard')->assertNotFound();
+        $this->get('/ad-conversions')->assertNotFound();
     }
 
     public function test_meta_capi_driver_payload_formatting(): void
     {
-        config()->set('omnisignal.meta.pixel_id', '1234567890');
-        config()->set('omnisignal.meta.access_token', 'META_TEST_TOKEN');
+        config()->set('google-ads-conversions.meta.pixel_id', '1234567890');
+        config()->set('google-ads-conversions.meta.access_token', 'META_TEST_TOKEN');
 
         Http::fake([
             'https://graph.facebook.com/*' => Http::response(['events_received' => 1], 200),
@@ -103,12 +82,13 @@ class OmniSignalTest extends TestCase
         });
     }
 
-    public function test_install_command_runs_successfully(): void
+    public function test_install_command_reports_channel_readiness(): void
     {
+        // The wizard is no longer interactive and no longer claims to have
+        // "configured" channels it never wrote any configuration for.
         $this->artisan('ad-conversions:install')
-            ->expectsQuestion('Which advertising channels do you want to configure?', ['google'])
-            ->expectsOutputToContain('OmniSignal Setup Wizard')
-            ->expectsOutputToContain('OmniSignal installation and setup completed!')
+            ->expectsOutputToContain('Channel status')
+            ->expectsOutputToContain('not configured')
             ->assertSuccessful();
     }
 }
