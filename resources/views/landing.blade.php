@@ -52,6 +52,7 @@
                     <span>Docs</span>
                     <span class="text-[10px] uppercase font-mono px-1 py-0.2 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">KB</span>
                 </a>
+                <a href="/portal" class="hover:text-emerald-400 transition">Portal</a>
                 <a href="/dashboard" class="hover:text-emerald-400 transition flex items-center gap-1.5 text-slate-400">
                     <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
                     Live Dashboard
@@ -82,6 +83,7 @@
             <a href="#privacy" class="block text-slate-300 hover:text-emerald-400 py-1 text-sm font-medium">Privacy Nirvana</a>
             <a href="#pricing" class="block text-slate-300 hover:text-emerald-400 py-1 text-sm font-medium">Pricing</a>
             <a href="/docs" class="block text-slate-300 hover:text-cyan-400 py-1 text-sm font-medium">Documentation & KB</a>
+            <a href="/portal" class="block text-slate-300 hover:text-emerald-400 py-1 text-sm font-medium">License & Account Portal</a>
             <a href="/dashboard" class="block text-emerald-400 py-1 text-sm font-medium">Live Dashboard</a>
             <a href="#pricing" class="block text-center mt-2 rounded-xl bg-emerald-500 text-slate-950 py-2.5 text-sm font-bold">Attain Nirvana →</a>
         </div>
@@ -404,10 +406,13 @@
                 <span class="font-bold text-slate-300">OmniSignal</span>
                 <span>&bull; Pure Signal. Zero Noise.</span>
             </div>
-            <div class="flex items-center space-x-6">
+            <div class="flex flex-wrap items-center justify-center gap-6">
+                <a href="/portal" class="hover:text-emerald-400 transition font-semibold">License Portal</a>
                 <a href="/docs" class="hover:text-slate-300 transition">Documentation</a>
-                <a href="/dashboard" class="hover:text-slate-300 transition">Dashboard</a>
-                <a href="#pricing" class="hover:text-slate-300 transition">Pricing</a>
+                <a href="/refunds" class="hover:text-slate-300 transition">Refunds</a>
+                <a href="/terms" class="hover:text-slate-300 transition">Terms</a>
+                <a href="/privacy" class="hover:text-slate-300 transition">Privacy</a>
+                <a href="https://app.lemonsqueezy.com/my-orders" target="_blank" class="hover:text-slate-300 transition">Billing Portal ↗</a>
                 <a href="https://github.com/electrictomcat/omnisignal" target="_blank" class="hover:text-slate-300 transition">GitHub</a>
             </div>
             <p>&copy; 2026 OmniSignal (<a href="https://omnisignal.dev" class="text-slate-400 hover:underline">omnisignal.dev</a>). All rights reserved.</p>
