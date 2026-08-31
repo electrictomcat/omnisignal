@@ -119,6 +119,14 @@ class OmniSignal_Forms
         self::dispatch_lead('Ninja Forms', $email, $phone);
     }
 
+    private static function default_lead_value(): float
+    {
+        $options = get_option('omnisignal_settings', []);
+        $value = $options['default_lead_value'] ?? '';
+
+        return is_numeric($value) ? (float) $value : 25.0;
+    }
+
     private static function dispatch_lead(string $source, ?string $email, ?string $phone): void
     {
         if (! $email && ! $phone) {
@@ -130,8 +138,10 @@ class OmniSignal_Forms
         $payload = [
             'event_name' => 'Lead',
             'order_id' => 'LEAD_'.uniqid(),
-            'value' => (float) apply_filters('omnisignal_default_lead_value', 25.0),
-            'currency' => 'USD',
+            // Configurable in the settings screen, and reported in the store's
+            // own currency rather than always USD.
+            'value' => (float) apply_filters('omnisignal_default_lead_value', self::default_lead_value()),
+            'currency' => function_exists('get_woocommerce_currency') ? get_woocommerce_currency() : 'USD',
             'email' => $email,
             'phone' => $phone,
             'source' => $source,

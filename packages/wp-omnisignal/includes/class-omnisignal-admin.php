@@ -27,7 +27,11 @@ class OmniSignal_Admin
 
     public static function register_settings(): void
     {
-        register_setting('omnisignal_settings_group', 'omnisignal_settings');
+        register_setting('omnisignal_settings_group', 'omnisignal_settings', [
+            'type' => 'array',
+            'sanitize_callback' => [__CLASS__, 'sanitize_settings'],
+            'default' => [],
+        ]);
     }
 
     public static function log_conversion(array $payload): void
@@ -76,12 +80,54 @@ class OmniSignal_Admin
         wp_send_json_success(['message' => "Live test conversion event dispatched successfully to {$channel}!"]);
     }
 
+    /**
+     * Sanitize the settings array before it is written.
+     *
+     * Anything not on this list is discarded rather than stored.
+     *
+     * @param  mixed  $input
+     * @return array<string, string>
+     */
+    public static function sanitize_settings($input): array
+    {
+        $allowed = [
+            'license_key',
+            'meta_pixel_id', 'meta_access_token', 'meta_test_event_code',
+            'tiktok_pixel_code', 'tiktok_access_token',
+            'microsoft_developer_token', 'microsoft_customer_id',
+            'microsoft_account_id', 'microsoft_access_token',
+            'linkedin_access_token', 'linkedin_conversion_rule_id',
+            'default_lead_value', 'default_calling_code',
+        ];
+
+        $existing = get_option('omnisignal_settings', []);
+        $clean = [];
+
+        foreach ($allowed as $key) {
+            $value = isset($input[$key]) ? sanitize_text_field(wp_unslash((string) $input[$key])) : '';
+
+            // A masked secret field submitted unchanged must not wipe the
+            // stored value.
+            if ($value === '' && str_ends_with($key, '_token') && ! empty($existing[$key])) {
+                $clean[$key] = $existing[$key];
+
+                continue;
+            }
+
+            $clean[$key] = $value;
+        }
+
+        return $clean;
+    }
+
     public static function render_page(): void
     {
         $options = get_option('omnisignal_settings', []);
         $logs = get_option('omnisignal_conversion_logs', []);
         $license_key = $options['license_key'] ?? '';
-        $is_pro = ! empty($license_key);
+        $license = OmniSignal_License::state();
+        // Verified against omnisignal.dev, not merely "the box is not empty".
+        $is_pro = OmniSignal_License::is_valid();
         ?>
         <div class="wrap" style="max-width: 950px; margin-top: 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
             
@@ -96,11 +142,11 @@ class OmniSignal_Admin
                         </div>
                     </div>
                     <div>
-                        <?php if ($is_pro) : ?>
+                        <?php if ($is_pro) { ?>
                             <span style="background: rgba(16, 185, 129, 0.15); color: #34d399; font-size: 12px; padding: 6px 14px; border-radius: 20px; font-weight: 600; border: 1px solid rgba(16, 185, 129, 0.3);">
-                                ● Pro Edition Active
+                                ● <?php echo esc_html(sprintf(__('%s licence active', 'omnisignal'), ucfirst($license['tier'] ?: 'Pro'))); ?>
                             </span>
-                        <?php else : ?>
+                        <?php } else { ?>
                             <div style="display: flex; align-items: center; gap: 8px;">
                                 <span style="background: rgba(148, 163, 184, 0.15); color: #cbd5e1; font-size: 12px; padding: 6px 12px; border-radius: 20px; font-weight: 600;">
                                     Community Edition (Google Ads Free)
@@ -109,7 +155,7 @@ class OmniSignal_Admin
                                     Unlock Pro CAPI →
                                 </a>
                             </div>
-                        <?php endif; ?>
+                        <?php } ?>
                     </div>
                 </div>
             </div>
@@ -126,9 +172,9 @@ class OmniSignal_Admin
                     </button>
                 </div>
 
-                <?php if (empty($logs)) : ?>
+                <?php if (empty($logs)) { ?>
                     <p style="color: #94a3b8; font-size: 13px; margin: 0; font-style: italic;">No conversions recorded yet. Complete a test purchase or click "Dispatch Test Event" above.</p>
-                <?php else : ?>
+                <?php } else { ?>
                     <table class="wp-list-table widefat fixed striped" style="border: 0; font-size: 12px;">
                         <thead>
                             <tr>
@@ -141,28 +187,60 @@ class OmniSignal_Admin
                             </tr>
                         </thead>
                         <tbody>
-                            <?php foreach ($logs as $log) : ?>
+                            <?php foreach ($logs as $log) { ?>
                                 <tr>
                                     <td><strong style="color: #0f172a;"><?php echo esc_html($log['event']); ?></strong></td>
                                     <td style="color: #059669; font-weight: 600;"><?php echo esc_html($log['currency'].' '.number_format($log['value'], 2)); ?></td>
                                     <td><code><?php echo esc_html($log['order_id']); ?></code></td>
                                     <td><?php echo esc_html($log['masked_email']); ?></td>
                                     <td>
-                                        <?php if ($log['has_click_id']) : ?>
+                                        <?php if ($log['has_click_id']) { ?>
                                             <span style="color: #059669; font-weight: 600;">✓ Captured</span>
-                                        <?php else : ?>
+                                        <?php } else { ?>
                                             <span style="color: #94a3b8;">Direct / Organic</span>
-                                        <?php endif; ?>
+                                        <?php } ?>
                                     </td>
                                     <td style="color: #64748b;"><?php echo esc_html(human_time_diff($log['timestamp'], time()).' ago'); ?></td>
                                 </tr>
-                            <?php endforeach; ?>
+                            <?php } ?>
                         </tbody>
                     </table>
-                <?php endif; ?>
+                <?php } ?>
             </div>
 
             <!-- Settings Form -->
+            <?php $failures = OmniSignal_API::recent_failures(); ?>
+            <?php if (! empty($failures)) { ?>
+                <div style="background: #fff; border: 1px solid #fecaca; border-left: 4px solid #dc2626; border-radius: 12px; padding: 20px 24px; margin-bottom: 24px;">
+                    <h2 style="font-size: 15px; margin: 0 0 4px; font-weight: 700; color: #991b1b;">
+                        <?php esc_html_e('Recent delivery failures', 'omnisignal'); ?>
+                    </h2>
+                    <p style="margin: 0 0 12px; color: #64748b; font-size: 13px;">
+                        <?php esc_html_e('These conversions were not accepted by the ad platform. Fix the cause and the next conversion will send normally.', 'omnisignal'); ?>
+                    </p>
+                    <table class="widefat striped" style="border: none;">
+                        <thead>
+                            <tr>
+                                <th><?php esc_html_e('When', 'omnisignal'); ?></th>
+                                <th><?php esc_html_e('Channel', 'omnisignal'); ?></th>
+                                <th><?php esc_html_e('Event', 'omnisignal'); ?></th>
+                                <th><?php esc_html_e('What the platform said', 'omnisignal'); ?></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($failures as $failure) { ?>
+                                <tr>
+                                    <td style="white-space: nowrap;"><?php echo esc_html(human_time_diff((int) $failure['at']).' ago'); ?></td>
+                                    <td><?php echo esc_html(ucfirst((string) $failure['channel'])); ?></td>
+                                    <td><?php echo esc_html((string) $failure['event']); ?></td>
+                                    <td style="color: #991b1b;"><?php echo esc_html((string) $failure['message']); ?></td>
+                                </tr>
+                            <?php } ?>
+                        </tbody>
+                    </table>
+                </div>
+            <?php } ?>
+
             <form method="post" action="options.php" style="background: #fff; padding: 32px; border-radius: 16px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
                 <?php settings_fields('omnisignal_settings_group'); ?>
 
@@ -173,7 +251,21 @@ class OmniSignal_Admin
                         <th scope="row"><label for="license_key">License Key</label></th>
                         <td>
                             <input type="text" id="license_key" name="omnisignal_settings[license_key]" value="<?php echo esc_attr($license_key); ?>" class="regular-text" placeholder="OMNI-XXXX-XXXX-XXXX-XXXX" />
-                            <p class="description">Activate your domain on <a href="https://omnisignal.dev/portal" target="_blank">omnisignal.dev/portal</a> or get a key at <a href="https://omnisignal.dev/#pricing" target="_blank">omnisignal.dev</a>.</p>
+                            <p class="description">
+                                <?php
+                                    $tone = ['valid' => '#059669', 'invalid' => '#dc2626', 'unreachable' => '#b45309'];
+        printf(
+            '<strong style="color:%s">%s</strong> %s',
+            esc_attr($tone[$license['status']] ?? '#64748b'),
+            esc_html(ucfirst($license['status'])),
+            esc_html($license['message'])
+        );
+        ?>
+                            </p>
+                            <p class="description">
+                                <?php esc_html_e('Manage your key and activated domains at', 'omnisignal'); ?>
+                                <a href="https://omnisignal.dev/portal" target="_blank">omnisignal.dev/portal</a>.
+                            </p>
                         </td>
                     </tr>
                 </table>
@@ -229,6 +321,66 @@ class OmniSignal_Admin
                         <th scope="row"><label for="tiktok_access_token">TikTok Access Token</label></th>
                         <td>
                             <input type="password" id="tiktok_access_token" name="omnisignal_settings[tiktok_access_token]" value="<?php echo esc_attr($options['tiktok_access_token'] ?? ''); ?>" class="regular-text" />
+                        </td>
+                    </tr>
+                </table>
+
+                <!-- Microsoft Advertising -->
+                <h2 style="font-size: 16px; margin-top: 30px; padding-bottom: 12px; border-bottom: 2px solid #f1f5f9; font-weight: 700;">🟦 Microsoft Advertising (Bing) Offline Conversions</h2>
+                <table class="form-table">
+                    <tr>
+                        <th scope="row"><label for="microsoft_developer_token">Developer Token</label></th>
+                        <td><input type="password" id="microsoft_developer_token" name="omnisignal_settings[microsoft_developer_token]" value="<?php echo esc_attr($options['microsoft_developer_token'] ?? ''); ?>" class="regular-text" /></td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><label for="microsoft_customer_id">Customer (Manager) ID</label></th>
+                        <td>
+                            <input type="text" id="microsoft_customer_id" name="omnisignal_settings[microsoft_customer_id]" value="<?php echo esc_attr($options['microsoft_customer_id'] ?? ''); ?>" class="regular-text" />
+                            <p class="description"><?php esc_html_e('The manager account ID, not the ad account.', 'omnisignal'); ?></p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><label for="microsoft_account_id">Ad Account ID</label></th>
+                        <td>
+                            <input type="text" id="microsoft_account_id" name="omnisignal_settings[microsoft_account_id]" value="<?php echo esc_attr($options['microsoft_account_id'] ?? ''); ?>" class="regular-text" />
+                            <p class="description"><?php esc_html_e('Both IDs are required; Microsoft rejects the upload without them.', 'omnisignal'); ?></p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><label for="microsoft_access_token">OAuth Access Token</label></th>
+                        <td><input type="password" id="microsoft_access_token" name="omnisignal_settings[microsoft_access_token]" value="<?php echo esc_attr($options['microsoft_access_token'] ?? ''); ?>" class="regular-text" /></td>
+                    </tr>
+                </table>
+
+                <!-- LinkedIn -->
+                <h2 style="font-size: 16px; margin-top: 30px; padding-bottom: 12px; border-bottom: 2px solid #f1f5f9; font-weight: 700;">🔗 LinkedIn Conversions API</h2>
+                <table class="form-table">
+                    <tr>
+                        <th scope="row"><label for="linkedin_access_token">Access Token</label></th>
+                        <td><input type="password" id="linkedin_access_token" name="omnisignal_settings[linkedin_access_token]" value="<?php echo esc_attr($options['linkedin_access_token'] ?? ''); ?>" class="regular-text" /></td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><label for="linkedin_conversion_rule_id">Conversion Rule ID</label></th>
+                        <td><input type="text" id="linkedin_conversion_rule_id" name="omnisignal_settings[linkedin_conversion_rule_id]" value="<?php echo esc_attr($options['linkedin_conversion_rule_id'] ?? ''); ?>" class="regular-text" /></td>
+                    </tr>
+                </table>
+
+                <!-- Lead defaults -->
+                <h2 style="font-size: 16px; margin-top: 30px; padding-bottom: 12px; border-bottom: 2px solid #f1f5f9; font-weight: 700;">⚙️ Lead Defaults</h2>
+                <table class="form-table">
+                    <tr>
+                        <th scope="row"><label for="default_lead_value">Default lead value</label></th>
+                        <td>
+                            <input type="number" step="0.01" min="0" id="default_lead_value" name="omnisignal_settings[default_lead_value]" value="<?php echo esc_attr($options['default_lead_value'] ?? '25'); ?>" class="small-text" />
+                            <span><?php echo esc_html(function_exists('get_woocommerce_currency') ? get_woocommerce_currency() : 'USD'); ?></span>
+                            <p class="description"><?php esc_html_e('Value attached to a form lead. Reported in your store currency.', 'omnisignal'); ?></p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><label for="default_calling_code">Default calling code</label></th>
+                        <td>
+                            <input type="text" id="default_calling_code" name="omnisignal_settings[default_calling_code]" value="<?php echo esc_attr($options['default_calling_code'] ?? ''); ?>" class="small-text" placeholder="1" />
+                            <p class="description"><?php esc_html_e('For phone numbers stored without a country code (1 = US, 44 = UK). Left blank, the store country is used; numbers that still cannot be resolved are dropped rather than hashed under a guessed country.', 'omnisignal'); ?></p>
                         </td>
                     </tr>
                 </table>

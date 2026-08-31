@@ -43,9 +43,13 @@ class OmniSignal_Tracker
 
     public static function enqueue_tracker_script(): void
     {
+        // Served from the plugin, not from omnisignal.dev. Loading it
+        // remotely made this site's tracking depend on our uptime, sent every
+        // visitor's IP to us, and is disallowed by the WordPress.org plugin
+        // guidelines.
         wp_enqueue_script(
             'omnisignal-client',
-            'https://omnisignal.dev/omnisignal.js',
+            OMNISIGNAL_URL.'assets/omnisignal.js',
             [],
             OMNISIGNAL_VERSION,
             true

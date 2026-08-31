@@ -20,6 +20,51 @@ class OmniSignal_WooCommerce
 
         // 4. Order Refunded
         add_action('woocommerce_order_status_refunded', [__CLASS__, 'on_order_refunded'], 10, 1);
+
+        // 5. Stamp the visitor's click IDs onto the order while we still have
+        //    their cookies. woocommerce_payment_complete often fires from a
+        //    gateway webhook — a server-to-server request carrying no cookies
+        //    at all — so reading them at that point attributed nothing.
+        add_action('woocommerce_checkout_create_order', [__CLASS__, 'stamp_click_ids'], 10, 2);
+        add_action('woocommerce_store_api_checkout_update_order_from_request', [__CLASS__, 'stamp_click_ids'], 10, 2);
+    }
+
+    /**
+     * Persist the current visitor's click identifiers on the order.
+     *
+     * @param  WC_Order  $order
+     */
+    public static function stamp_click_ids($order, $data = null): void
+    {
+        if (! is_object($order) || ! method_exists($order, 'update_meta_data')) {
+            return;
+        }
+
+        foreach (OmniSignal_Tracker::get_click_ids() as $key => $value) {
+            if ($value !== '') {
+                $order->update_meta_data('_omnisignal_'.$key, $value);
+            }
+        }
+    }
+
+    /**
+     * Click identifiers for an order: what was stamped at checkout, falling
+     * back to the current request's cookies for orders created another way.
+     *
+     * @param  WC_Order  $order
+     * @return array<string, string>
+     */
+    private static function click_ids_for_order($order): array
+    {
+        $live = OmniSignal_Tracker::get_click_ids();
+        $clicks = [];
+
+        foreach ($live as $key => $value) {
+            $stored = $order->get_meta('_omnisignal_'.$key);
+            $clicks[$key] = $stored !== '' && $stored !== null ? (string) $stored : $value;
+        }
+
+        return $clicks;
     }
 
     public static function on_payment_complete(int $order_id): void
@@ -101,7 +146,7 @@ class OmniSignal_WooCommerce
             return;
         }
 
-        $clicks = OmniSignal_Tracker::get_click_ids();
+        $clicks = self::click_ids_for_order($order);
         $payload = [
             'event_name' => 'Refund',
             'order_id' => $order->get_id(),
@@ -119,17 +164,19 @@ class OmniSignal_WooCommerce
 
     private static function process_purchase(int $order_id): void
     {
-        // Avoid duplicate triggers
-        if (get_post_meta($order_id, '_omnisignal_uploaded', true)) {
-            return;
-        }
-
         $order = wc_get_order($order_id);
         if (! $order) {
             return;
         }
 
-        $clicks = OmniSignal_Tracker::get_click_ids();
+        // Order meta, not post meta: under High-Performance Order Storage —
+        // the WooCommerce default — orders are not posts, so get_post_meta()
+        // always returned nothing and both purchase hooks fired.
+        if ($order->get_meta('_omnisignal_uploaded')) {
+            return;
+        }
+
+        $clicks = self::click_ids_for_order($order);
 
         $items = [];
         foreach ($order->get_items() as $item) {
@@ -169,11 +216,14 @@ class OmniSignal_WooCommerce
             'li_fat_id' => $clicks['li_fat_id'],
         ];
 
+        // Claim the order before dispatching, so a second hook firing while
+        // the first is still in flight cannot send a duplicate.
+        $order->update_meta_data('_omnisignal_uploaded', time());
+        $order->save();
+
         OmniSignal_API::send_conversion($payload);
 
         // Store log for in-admin analytics
         OmniSignal_Admin::log_conversion($payload);
-
-        update_post_meta($order_id, '_omnisignal_uploaded', time());
     }
 }
