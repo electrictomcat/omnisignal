@@ -2,17 +2,19 @@
 
 namespace OmniSignal;
 
-use OmniSignal\DTO\ConversionPayload;
 use OmniSignal\Drivers\GoogleAdsDriver;
 use OmniSignal\Drivers\LinkedInDriver;
 use OmniSignal\Drivers\MetaCapiDriver;
 use OmniSignal\Drivers\MicrosoftAdsDriver;
 use OmniSignal\Drivers\TikTokDriver;
+use OmniSignal\DTO\ConversionPayload;
 
 class OmniSignalClient
 {
     protected array $config;
+
     protected array $drivers = [];
+
     protected string $apiBase = 'https://omnisignal.dev/api/v1';
 
     public function __construct(array $config = [])
@@ -36,17 +38,58 @@ class OmniSignalClient
             $this->drivers['tiktok'] = new TikTokDriver($this->config['tiktok']);
         }
 
-        if (! empty($this->config['google']['customer_id'])) {
-            $this->drivers['google'] = new GoogleAdsDriver($this->config['google']);
+        // These three ask the driver itself whether it has everything it
+        // needs, rather than guessing from one key. A half-configured channel
+        // that silently no-ops is worse than one that says it is not set up.
+        foreach ([
+            'google' => GoogleAdsDriver::class,
+            'linkedin' => LinkedInDriver::class,
+            'microsoft' => MicrosoftAdsDriver::class,
+        ] as $name => $class) {
+            if (empty($this->config[$name])) {
+                continue;
+            }
+
+            $driver = new $class($this->config[$name]);
+
+            if ($driver->isConfigured()) {
+                $this->drivers[$name] = $driver;
+            }
+        }
+    }
+
+    /**
+     * Check every configured channel's credentials against its live API.
+     *
+     * @return array<string, array{success: bool, message: string}>
+     */
+    public function testConnections(): array
+    {
+        $results = [];
+
+        foreach ($this->drivers as $channel => $driver) {
+            if (! method_exists($driver, 'testConnection')) {
+                continue;
+            }
+
+            try {
+                $results[$channel] = $driver->testConnection();
+            } catch (\Throwable $e) {
+                $results[$channel] = ['success' => false, 'message' => $e->getMessage()];
+            }
         }
 
-        if (! empty($this->config['linkedin']['access_token'])) {
-            $this->drivers['linkedin'] = new LinkedInDriver($this->config['linkedin']);
-        }
+        return $results;
+    }
 
-        if (! empty($this->config['microsoft']['customer_id'])) {
-            $this->drivers['microsoft'] = new MicrosoftAdsDriver($this->config['microsoft']);
-        }
+    /**
+     * The channels that are configured and will actually be sent to.
+     *
+     * @return array<int, string>
+     */
+    public function activeChannels(): array
+    {
+        return array_keys($this->drivers);
     }
 
     /**
@@ -54,12 +97,13 @@ class OmniSignalClient
      */
     public function record(
         string $eventName,
-        float $value = 0.0,
+        ?float $value = null,
         string $currency = 'USD',
         ?string $orderId = null,
         array $user = [],
         array $clickIds = [],
-        array $customData = []
+        array $customData = [],
+        ?string $eventSourceUrl = null,
     ): array {
         $payload = new ConversionPayload(
             eventName: $eventName,
@@ -73,8 +117,11 @@ class OmniSignalClient
             fbclid: $clickIds['fbclid'] ?? null,
             ttclid: $clickIds['ttclid'] ?? null,
             msclkid: $clickIds['msclkid'] ?? null,
+            fbc: $clickIds['fbc'] ?? null,
+            fbp: $clickIds['fbp'] ?? null,
             liFatId: $clickIds['li_fat_id'] ?? null,
-            customData: $customData
+            customData: $customData,
+            eventSourceUrl: $eventSourceUrl,
         );
 
         return $this->send([$payload]);
@@ -109,7 +156,7 @@ class OmniSignalClient
      */
     public function activateLicense(string $licenseKey, string $domain): array
     {
-        $url = $this->apiBase . '/licenses/activate';
+        $url = $this->apiBase.'/licenses/activate';
         $ch = curl_init($url);
 
         curl_setopt_array($ch, [
