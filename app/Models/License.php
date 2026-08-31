@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class License extends Model
@@ -53,47 +54,115 @@ class License extends Model
 
     public function isActivatedFor(string $domain): bool
     {
-        $domain = strtolower(trim($domain));
-        $instances = $this->instances ?? [];
-
-        return in_array($domain, $instances, true);
+        return in_array($this->normalizeDomain($domain), $this->instances ?? [], true);
     }
 
+    /**
+     * Activate a domain against this licence.
+     *
+     * Runs inside a transaction with the row locked: read, limit check and
+     * write have to be one step, or two simultaneous activations both pass the
+     * check and a one-domain licence ends up holding two.
+     */
     public function activate(string $domain): bool
     {
-        $domain = strtolower(trim($domain));
-        $instances = $this->instances ?? [];
+        $domain = $this->normalizeDomain($domain);
 
-        if (in_array($domain, $instances, true)) {
-            return true;
-        }
-
-        if (count($instances) >= $this->activation_limit) {
+        if ($domain === '') {
             return false;
         }
 
-        $instances[] = $domain;
-        $this->instances = $instances;
-        $this->activation_count = count($instances);
-        $this->save();
+        return DB::transaction(function () use ($domain) {
+            /** @var self $license */
+            $license = self::query()->lockForUpdate()->findOrFail($this->getKey());
 
-        return true;
+            $instances = $license->instances ?? [];
+
+            if (in_array($domain, $instances, true)) {
+                $this->syncFrom($license);
+
+                return true;
+            }
+
+            if (count($instances) >= $license->activation_limit) {
+                $this->syncFrom($license);
+
+                return false;
+            }
+
+            $instances[] = $domain;
+            $license->instances = $instances;
+            $license->activation_count = count($instances);
+            $license->save();
+
+            $this->syncFrom($license);
+
+            return true;
+        });
     }
 
     public function deactivate(string $domain): bool
     {
-        $domain = strtolower(trim($domain));
-        $instances = $this->instances ?? [];
+        $domain = $this->normalizeDomain($domain);
 
-        if (! in_array($domain, $instances, true)) {
+        if ($domain === '') {
             return false;
         }
 
-        $instances = array_values(array_filter($instances, fn ($d) => $d !== $domain));
-        $this->instances = $instances;
-        $this->activation_count = count($instances);
-        $this->save();
+        return DB::transaction(function () use ($domain) {
+            /** @var self $license */
+            $license = self::query()->lockForUpdate()->findOrFail($this->getKey());
 
-        return true;
+            $instances = $license->instances ?? [];
+
+            if (! in_array($domain, $instances, true)) {
+                $this->syncFrom($license);
+
+                return false;
+            }
+
+            $license->instances = array_values(array_filter($instances, fn ($d) => $d !== $domain));
+            $license->activation_count = count($license->instances);
+            $license->save();
+
+            $this->syncFrom($license);
+
+            return true;
+        });
+    }
+
+    /**
+     * Normalise a domain to the form activations are stored in.
+     *
+     * Accepts what people actually paste — a full URL, a www. prefix, a
+     * trailing slash, mixed case — so the same site cannot consume two slots.
+     */
+    protected function normalizeDomain(string $domain): string
+    {
+        $domain = strtolower(trim($domain));
+
+        if ($domain === '') {
+            return '';
+        }
+
+        if (str_contains($domain, '://')) {
+            $domain = (string) (parse_url($domain, PHP_URL_HOST) ?: $domain);
+        }
+
+        $domain = explode('/', $domain)[0];
+        $domain = explode(':', $domain)[0];
+
+        return preg_replace('/^www\./', '', $domain) ?? $domain;
+    }
+
+    /**
+     * Copy the locked row's activation state back onto this instance so the
+     * caller sees current counts without a second query.
+     */
+    protected function syncFrom(self $fresh): void
+    {
+        $this->instances = $fresh->instances;
+        $this->activation_count = $fresh->activation_count;
+        $this->syncOriginal();
     }
 }
