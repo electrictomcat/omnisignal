@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\License;
+use App\Support\IngestToken;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -49,6 +50,7 @@ class LicenseController extends Controller
             'activation_count' => $license->activation_count,
             'is_activated_for_domain' => $isActivated,
             'expires_at' => $license->expires_at?->toIso8601String(),
+            'hosted_channels' => $license->hostedChannels(),
         ]);
     }
 
@@ -96,6 +98,13 @@ class LicenseController extends Controller
             'domain' => $domain,
             'activation_count' => $license->activation_count,
             'activation_limit' => $license->activation_limit,
+
+            // The site stores this instead of the licence key, so a
+            // compromised install cannot leak the key or reach the customer's
+            // other domains. Deactivating this domain revokes it.
+            'ingest_token' => IngestToken::for($license, $domain),
+            'ingest_url' => route('api.conversions.ingest'),
+            'hosted_channels' => $license->hostedChannels(),
         ]);
     }
 

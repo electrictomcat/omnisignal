@@ -54,6 +54,15 @@ class AppServiceProvider extends ServiceProvider
             ];
         });
 
+        // Ingest is per-site and batched, so it needs more headroom than the
+        // licence endpoints. Keyed on the bearer token, which is per domain.
+        RateLimiter::for('conversions-ingest', function (Request $request) {
+            return [
+                Limit::perMinute(120)->by('token:'.sha1((string) $request->bearerToken())),
+                Limit::perMinute(300)->by('ip:'.$request->ip()),
+            ];
+        });
+
         RateLimiter::for('licenses-write', function (Request $request) {
             return [
                 Limit::perMinute(10)->by('ip:'.$request->ip()),
