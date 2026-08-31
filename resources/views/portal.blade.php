@@ -4,21 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Customer License & Account Portal &bull; OmniSignal</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; }
-        code, pre, .font-mono { font-family: 'JetBrains Mono', monospace; }
-        .radial-zen {
-            background: radial-gradient(circle at 50% 10%, rgba(16, 185, 129, 0.1) 0%, rgba(6, 182, 212, 0.04) 30%, transparent 65%);
-        }
-    </style>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="bg-[#090D16] text-slate-200 antialiased selection:bg-emerald-500/20 selection:text-emerald-300">
 
-    <div class="fixed inset-0 radial-zen pointer-events-none -z-10"></div>
+    <div class="fixed inset-0 radial-zen-mid pointer-events-none -z-10"></div>
 
     <!-- Header -->
     <header class="sticky top-0 z-50 backdrop-blur-md bg-[#090D16]/90 border-b border-slate-800/80">
@@ -56,7 +46,7 @@
             </div>
             <h1 class="text-3xl sm:text-4xl font-extrabold text-white">Manage Your OmniSignal License</h1>
             <p class="mt-3 text-slate-400 text-base max-w-xl mx-auto">
-                Look up your license keys, view active domain activations, manage your subscription, and download invoices.
+                Enter the email address you bought with and we'll send you a secure link to your license keys, domain activations and invoices.
             </p>
         </div>
 
@@ -67,33 +57,55 @@
             </div>
         @endif
 
-        <!-- Search Form -->
-        <div class="rounded-2xl bg-slate-900/80 border border-slate-800 p-6 sm:p-8 shadow-2xl mb-12">
-            <form action="{{ route('portal.lookup') }}" method="POST" class="flex flex-col sm:flex-row gap-4">
-                @csrf
-                <div class="flex-1">
-                    <label for="query" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 font-mono mb-2">
-                        Enter Buyer Email or License Key
-                    </label>
-                    <input type="text" id="query" name="query" value="{{ $query }}" placeholder="e.g. buyer@example.com or OMNI-XXXX-XXXX" required
-                        class="w-full px-4 py-3 bg-[#080d16] border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-emerald-400 font-mono text-sm">
-                </div>
-                <div class="sm:self-end">
-                    <button type="submit" class="w-full sm:w-auto px-6 py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm rounded-xl transition shadow-lg shadow-emerald-500/20 active:scale-95">
-                        Lookup License
-                    </button>
-                </div>
-            </form>
-        </div>
+        @if(session('status'))
+            <div class="mb-8 p-4 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-200 text-sm flex items-start gap-2">
+                <span>✉</span>
+                <span>{{ session('status') }}</span>
+            </div>
+        @endif
+
+        @if($errors->any())
+            <div class="mb-8 p-4 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-sm flex items-start gap-2">
+                <span>!</span>
+                <span>{{ $errors->first() }}</span>
+            </div>
+        @endif
+
+        @unless($unlocked)
+            <!-- Request an access link -->
+            <div class="rounded-2xl bg-slate-900/80 border border-slate-800 p-6 sm:p-8 shadow-2xl mb-12">
+                <form action="{{ route('portal.lookup') }}" method="POST" class="flex flex-col sm:flex-row gap-4">
+                    @csrf
+                    <div class="flex-1">
+                        <label for="email" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 font-mono mb-2">
+                            Your purchase email
+                        </label>
+                        <input type="email" id="email" name="email" value="{{ old('email') }}" placeholder="buyer@example.com" required autocomplete="email"
+                            class="w-full px-4 py-3 bg-[#080d16] border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-emerald-400 font-mono text-sm">
+                        <p class="mt-2 text-xs text-slate-500">
+                            We'll email a secure link that opens your licenses. Keys are never shown to anyone who hasn't received that email.
+                        </p>
+                    </div>
+                    <div class="sm:self-start sm:pt-7">
+                        <button type="submit" class="w-full sm:w-auto px-6 py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm rounded-xl transition shadow-lg shadow-emerald-500/20 active:scale-95">
+                            Email me a link
+                        </button>
+                    </div>
+                </form>
+            </div>
+        @endunless
 
         <!-- License Results -->
-        @if(!empty($query))
+        @if($unlocked)
+            <div class="mb-8 text-center text-xs text-slate-500 font-mono">
+                Signed in as {{ $email }}
+            </div>
             @if($licenses->isEmpty())
                 <div class="rounded-2xl bg-slate-900/40 border border-slate-800 p-12 text-center">
                     <div class="text-4xl mb-3">🔍</div>
                     <h3 class="text-lg font-bold text-white">No License Found</h3>
                     <p class="text-slate-400 text-sm mt-1 max-w-md mx-auto">
-                        We couldn't find any licenses matching <code class="text-slate-300 font-mono">{{ $query }}</code>. Please make sure you entered the email address used during Lemon Squeezy checkout.
+                        There are no licenses on this address any more. If you bought under a different email, request a link for that one instead.
                     </p>
                     <div class="mt-6">
                         <a href="https://app.lemonsqueezy.com/my-orders" target="_blank" class="text-xs text-emerald-400 hover:underline">

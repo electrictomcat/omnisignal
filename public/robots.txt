@@ -1,2 +1,18 @@
 User-agent: *
-Disallow:
+
+# Customer-facing pages are indexable.
+Allow: /$
+Allow: /docs
+Allow: /terms
+Allow: /privacy
+Allow: /refunds
+
+# Account and internal surfaces are not.
+Disallow: /portal
+Disallow: /account
+Disallow: /thanks
+Disallow: /checkout
+Disallow: /dashboard
+Disallow: /ad-conversions
+Disallow: /api/
+Disallow: /webhooks/

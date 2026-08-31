@@ -10,58 +10,55 @@ use Illuminate\Support\Facades\Log;
 
 class CheckoutController extends Controller
 {
+    /** @var array<int, string> */
+    protected const VALID_TIERS = ['starter', 'pro', 'agency'];
+
     public function __invoke(Request $request, string $tier = 'pro'): RedirectResponse
     {
         $tier = strtolower(trim($tier));
-        $validTiers = ['starter', 'pro', 'agency'];
 
-        if (! in_array($tier, $validTiers, true)) {
+        if (! in_array($tier, self::VALID_TIERS, true)) {
             $tier = 'pro';
         }
 
-        $apiKey = config('services.lemonsqueezy.api_key');
-        $storeId = config('services.lemonsqueezy.store_id', '463287');
-        $variantId = config("services.lemonsqueezy.variants.{$tier}");
+        // Monthly by default; ?billing=once switches to the one-time variant.
+        $variantKey = $request->query('billing') === 'once' ? "{$tier}_onetime" : $tier;
 
-        // If specific variant ID is configured, create dynamic checkout session via LemonSqueezy API
+        $apiKey = config('services.lemonsqueezy.api_key');
+        $storeId = config('services.lemonsqueezy.store_id');
+        $variantId = config("services.lemonsqueezy.variants.{$variantKey}");
+
         if ($apiKey && $storeId && $variantId) {
             try {
-                $payload = [
-                    'data' => [
-                        'type' => 'checkouts',
-                        'attributes' => [
-                            'checkout_data' => [
-                                'custom' => [
-                                    'tier' => $tier,
-                                ],
-                            ],
-                            'product_options' => [
-                                'redirect_url' => url('/dashboard?checkout=success'),
-                            ],
-                        ],
-                        'relationships' => [
-                            'store' => [
-                                'data' => [
-                                    'type' => 'stores',
-                                    'id' => (string) $storeId,
-                                ],
-                            ],
-                            'variant' => [
-                                'data' => [
-                                    'type' => 'variants',
-                                    'id' => (string) $variantId,
-                                ],
-                            ],
-                        ],
-                    ],
-                ];
-
                 $response = Http::withToken($apiKey)
                     ->timeout(10)
-                    ->post('https://api.lemonsqueezy.com/v1/checkouts', $payload);
+                    ->post('https://api.lemonsqueezy.com/v1/checkouts', [
+                        'data' => [
+                            'type' => 'checkouts',
+                            'attributes' => [
+                                'checkout_data' => [
+                                    'custom' => ['tier' => $tier],
+                                ],
+                                'product_options' => [
+                                    // A real receipt page, not the internal
+                                    // analytics dashboard.
+                                    'redirect_url' => route('checkout.thanks'),
+                                ],
+                            ],
+                            'relationships' => [
+                                'store' => [
+                                    'data' => ['type' => 'stores', 'id' => (string) $storeId],
+                                ],
+                                'variant' => [
+                                    'data' => ['type' => 'variants', 'id' => (string) $variantId],
+                                ],
+                            ],
+                        ],
+                    ]);
 
                 if ($response->successful()) {
                     $checkoutUrl = $response->json('data.attributes.url');
+
                     if ($checkoutUrl) {
                         return redirect()->away($checkoutUrl);
                     }
@@ -71,9 +68,10 @@ class CheckoutController extends Controller
             } catch (\Throwable $e) {
                 Log::error('[LemonSqueezy] Checkout error: '.$e->getMessage());
             }
+        } else {
+            Log::warning("[LemonSqueezy] Checkout not configured for tier '{$variantKey}'; falling back to the store front.");
         }
 
-        // Direct fallback to LemonSqueezy store URL
-        return redirect()->away("https://omnisignal.lemonsqueezy.com");
+        return redirect()->away(config('services.lemonsqueezy.store_url'));
     }
 }

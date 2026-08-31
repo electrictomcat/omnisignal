@@ -17,15 +17,46 @@ Route::get('/kb', function () {
     return redirect()->route('docs');
 });
 
-// Self-Service Customer License & Account Portal
+/*
+|--------------------------------------------------------------------------
+| Self-service licence portal
+|--------------------------------------------------------------------------
+|
+| Access is proven by control of the purchase email. `lookup` only ever sends
+| a link; `show` requires the signature on that link; `deactivate` acts on the
+| session established by it. Both write routes are throttled so the form
+| cannot be used to enumerate customers or spray mail.
+|
+*/
 Route::get('/portal', [PortalController::class, 'index'])->name('portal');
-Route::post('/portal/lookup', [PortalController::class, 'lookup'])->name('portal.lookup');
-Route::post('/portal/deactivate', [PortalController::class, 'deactivateDomain'])->name('portal.deactivate');
+
+Route::get('/portal/licences', [PortalController::class, 'show'])
+    ->middleware('signed')
+    ->name('portal.show');
+
+Route::post('/portal/lookup', [PortalController::class, 'lookup'])
+    ->middleware('throttle:5,1')
+    ->name('portal.lookup');
+
+Route::post('/portal/deactivate', [PortalController::class, 'deactivateDomain'])
+    ->middleware('throttle:20,1')
+    ->name('portal.deactivate');
+
 Route::get('/account', function () {
     return redirect()->route('portal');
 });
 
-// Legal, Refund & Compliance Pages
+// Post-purchase landing page. Buyers used to be sent to the internal
+// analytics dashboard here.
+Route::get('/thanks', function () {
+    return view('thanks');
+})->name('checkout.thanks');
+
+/*
+|--------------------------------------------------------------------------
+| Legal, refund & compliance pages
+|--------------------------------------------------------------------------
+*/
 Route::get('/refunds', function () {
     return view('refunds');
 })->name('refunds');
@@ -38,8 +69,10 @@ Route::get('/privacy', function () {
     return view('privacy');
 })->name('privacy');
 
-// LemonSqueezy Checkout Redirects / Overlays
-Route::get('/checkout/{tier?}', CheckoutController::class)->name('checkout');
+// Lemon Squeezy checkout redirects / overlays
+Route::get('/checkout/{tier?}', CheckoutController::class)
+    ->middleware('throttle:30,1')
+    ->name('checkout');
 
-// LemonSqueezy Webhook Listener
+// Lemon Squeezy webhook listener (HMAC-verified in the controller)
 Route::post('/webhooks/lemonsqueezy', WebhookController::class)->name('webhooks.lemonsqueezy');
