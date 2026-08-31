@@ -32,7 +32,10 @@ class OmniSignal_Normalizer
 
         $normalized = strtolower(trim($email));
 
-        if (! is_email($normalized)) {
+        // filter_var rather than WordPress's is_email, so this class stays
+        // pure logic — testable without loading WordPress, and matching what
+        // the Laravel package and the PHP SDK do for the same address.
+        if (! filter_var($normalized, FILTER_VALIDATE_EMAIL)) {
             return null;
         }
 
