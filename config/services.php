@@ -6,13 +6,18 @@ return [
     |--------------------------------------------------------------------------
     | Third Party Services
     |--------------------------------------------------------------------------
-    |
-    | This file is for storing the credentials for third party services such
-    | as Resend, Postmark, AWS, and more. This file provides the de facto
-    | location for this type of information, allowing packages to have
-    | a conventional file to locate the various service credentials.
-    |
     */
+
+    'lemonsqueezy' => [
+        'api_key' => env('LEMON_SQUEEZY_API_KEY'),
+        'store_id' => env('LEMON_SQUEEZY_STORE_ID', '463287'),
+        'signing_secret' => env('LEMON_SQUEEZY_SIGNING_SECRET'),
+        'variants' => [
+            'starter' => env('LEMON_SQUEEZY_VARIANT_STARTER'),
+            'pro' => env('LEMON_SQUEEZY_VARIANT_PRO'),
+            'agency' => env('LEMON_SQUEEZY_VARIANT_AGENCY'),
+        ],
+    ],
 
     'postmark' => [
         'key' => env('POSTMARK_API_KEY'),

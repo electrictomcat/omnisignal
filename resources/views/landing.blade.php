@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OmniSignal &bull; Pure Signal. Zero Noise. &bull; Attribution Nirvana for Laravel & WordPress</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://assets.lemonsqueezy.com/lemon.js" defer></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -110,7 +111,7 @@
 
                 <!-- Action Buttons -->
                 <div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-                    <a href="#pricing" class="w-full sm:w-auto rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 px-8 py-4 text-base font-bold shadow-xl shadow-emerald-500/25 transition transform active:scale-95 flex items-center justify-center gap-2">
+                    <a href="/checkout/pro" class="lemonsqueezy-button w-full sm:w-auto rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 px-8 py-4 text-base font-bold shadow-xl shadow-emerald-500/25 transition transform active:scale-95 flex items-center justify-center gap-2">
                         <span>Get OmniSignal Pro</span>
                         <span>→</span>
                     </a>
@@ -338,7 +339,7 @@
                                 <li class="flex items-center gap-3"><span class="text-emerald-400">✓</span> 1 Year of Updates & Security Fixes</li>
                             </ul>
                         </div>
-                        <a href="https://omnisignal.dev" class="mt-8 block w-full rounded-xl bg-slate-800 hover:bg-slate-700 text-center py-3 text-sm font-semibold text-white transition">
+                        <a href="/checkout/starter" class="lemonsqueezy-button mt-8 block w-full rounded-xl bg-slate-800 hover:bg-slate-700 text-center py-3 text-sm font-semibold text-white transition">
                             Choose Starter
                         </a>
                     </div>
@@ -364,7 +365,7 @@
                                 <li class="flex items-center gap-3"><span class="text-emerald-400">✓</span> Priority Support</li>
                             </ul>
                         </div>
-                        <a href="https://omnisignal.dev" class="mt-8 block w-full rounded-xl bg-emerald-500 hover:bg-emerald-400 text-center py-3 text-sm font-bold text-slate-950 transition shadow-lg shadow-emerald-500/20">
+                        <a href="/checkout/pro" class="lemonsqueezy-button mt-8 block w-full rounded-xl bg-emerald-500 hover:bg-emerald-400 text-center py-3 text-sm font-bold text-slate-950 transition shadow-lg shadow-emerald-500/20">
                             Choose Pro
                         </a>
                     </div>
@@ -386,7 +387,7 @@
                                 <li class="flex items-center gap-3"><span class="text-emerald-400">✓</span> 1-on-1 Onboarding Assistance</li>
                             </ul>
                         </div>
-                        <a href="https://omnisignal.dev" class="mt-8 block w-full rounded-xl bg-slate-800 hover:bg-slate-700 text-center py-3 text-sm font-semibold text-white transition">
+                        <a href="/checkout/agency" class="lemonsqueezy-button mt-8 block w-full rounded-xl bg-slate-800 hover:bg-slate-700 text-center py-3 text-sm font-semibold text-white transition">
                             Choose Agency
                         </a>
                     </div>

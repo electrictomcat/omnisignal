@@ -52,7 +52,18 @@ class OmniSignal_Admin
             <form method="post" action="options.php" style="background: #fff; padding: 30px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
                 <?php settings_fields('omnisignal_settings_group'); ?>
 
-                <h2 style="font-size: 16px; margin-top: 0; padding-bottom: 12px; border-bottom: 1px solid #edf2f7;">🔵 Meta (Facebook & Instagram) CAPI</h2>
+                <h2 style="font-size: 16px; margin-top: 0; padding-bottom: 12px; border-bottom: 1px solid #edf2f7;">🔑 OmniSignal License</h2>
+                <table class="form-table">
+                    <tr>
+                        <th scope="row"><label for="license_key">License Key</label></th>
+                        <td>
+                            <input type="text" id="license_key" name="omnisignal_settings[license_key]" value="<?php echo esc_attr($options['license_key'] ?? ''); ?>" class="regular-text" placeholder="OMNI-XXXX-XXXX-XXXX-XXXX" />
+                            <p class="description">Obtain your license key from <a href="https://omnisignal.dev/#pricing" target="_blank">omnisignal.dev</a>.</p>
+                        </td>
+                    </tr>
+                </table>
+
+                <h2 style="font-size: 16px; margin-top: 30px; padding-bottom: 12px; border-bottom: 1px solid #edf2f7;">🔵 Meta (Facebook & Instagram) CAPI</h2>
                 <table class="form-table">
                     <tr>
                         <th scope="row"><label for="meta_pixel_id">Meta Pixel / Dataset ID</label></th>
