@@ -9,6 +9,7 @@ class OmniSignal_Tracker
     public static function init(): void
     {
         add_action('init', [__CLASS__, 'capture_click_ids']);
+        add_action('wp_enqueue_scripts', [__CLASS__, 'enqueue_tracker_script']);
     }
 
     public static function capture_click_ids(): void
@@ -38,6 +39,17 @@ class OmniSignal_Tracker
                 $_COOKIE[$cookie_name] = $val;
             }
         }
+    }
+
+    public static function enqueue_tracker_script(): void
+    {
+        wp_enqueue_script(
+            'omnisignal-client',
+            'https://omnisignal.dev/omnisignal.js',
+            [],
+            OMNISIGNAL_VERSION,
+            true
+        );
     }
 
     public static function get_click_ids(): array

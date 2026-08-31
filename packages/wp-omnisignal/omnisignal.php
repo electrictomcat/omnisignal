@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Plugin Name: OmniSignal &bull; Server-Side Conversion Tracking & CAPI for WooCommerce
+ * Plugin Name: OmniSignal &bull; Server-Side Conversion Tracking & CAPI for WooCommerce & WordPress
  * Plugin URI: https://omnisignal.dev
- * Description: Pure Signal. Zero Noise. Attribution Nirvana for WooCommerce. Recover lost ad conversions across Google Ads, Meta CAPI, TikTok, LinkedIn, and Microsoft Ads.
+ * Description: Pure Signal. Zero Noise. Attribution Nirvana for WooCommerce & WordPress. Recover lost ad conversions across Google Ads, Meta CAPI, TikTok, LinkedIn, and Microsoft Ads.
  * Version: 2.0.0
  * Author: OmniSignal
  * Author URI: https://omnisignal.dev
@@ -26,11 +26,13 @@ define('OMNISIGNAL_URL', plugin_dir_url(__FILE__));
 require_once OMNISIGNAL_PATH.'includes/class-omnisignal-tracker.php';
 require_once OMNISIGNAL_PATH.'includes/class-omnisignal-api.php';
 require_once OMNISIGNAL_PATH.'includes/class-omnisignal-woocommerce.php';
+require_once OMNISIGNAL_PATH.'includes/class-omnisignal-forms.php';
 require_once OMNISIGNAL_PATH.'includes/class-omnisignal-admin.php';
 
 add_action('plugins_loaded', function () {
     OmniSignal_Tracker::init();
     OmniSignal_WooCommerce::init();
+    OmniSignal_Forms::init();
     if (is_admin()) {
         OmniSignal_Admin::init();
     }

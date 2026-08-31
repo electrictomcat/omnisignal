@@ -97,7 +97,9 @@
                         <li><a href="#testing-fake" class="block text-slate-400 hover:text-white transition">Testing Fake (`fake()`)</a></li>
                         <li><a href="#blade" class="block text-slate-400 hover:text-white transition">Blade Form Directives</a></li>
                         <li><a href="#cli" class="block text-slate-400 hover:text-white transition">Artisan CLI Commands</a></li>
-                        <li><a href="#woocommerce" class="block text-slate-400 hover:text-white transition">WooCommerce Plugin</a></li>
+                        <li><a href="#php-sdk" class="block text-slate-400 hover:text-white transition">Universal PHP SDK</a></li>
+                        <li><a href="#woocommerce" class="block text-slate-400 hover:text-white transition">WordPress & WooCommerce</a></li>
+                        <li><a href="#client-script" class="block text-slate-400 hover:text-white transition">Client Script (`omnisignal.js`)</a></li>
                     </ul>
                 </div>
             </div>
@@ -314,6 +316,89 @@ php artisan migrate</code></pre>
                             </tr>
                         </tbody>
                     </table>
+                </div>
+            </section>
+
+            <!-- Universal PHP SDK -->
+            <section id="php-sdk" class="scroll-mt-28 pt-8 border-t border-slate-800/80">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 text-xs font-medium text-cyan-400 mb-3 border border-cyan-500/20">
+                    <span>🐘 Universal PHP SDK</span>
+                </div>
+                <h2 class="text-2xl font-bold text-white">Universal Standalone PHP SDK (Framework-Agnostic)</h2>
+                <p class="mt-3 text-slate-400 text-sm leading-relaxed">
+                    Building a Symfony, Drupal, raw PHP app, or custom webhook consumer? Use our zero-dependency standalone PHP client:
+                </p>
+
+                <div class="mt-4 rounded-2xl bg-[#0c121e] border border-slate-800 overflow-hidden">
+                    <div class="px-4 py-2 bg-[#070b12] border-b border-slate-800">
+                        <span class="text-xs font-mono text-slate-400">composer require omnisignal/php-sdk</span>
+                    </div>
+                    <pre class="p-5 text-sm text-slate-300 font-mono leading-relaxed"><code><span class="text-emerald-400">use</span> OmniSignal\OmniSignalClient;
+
+<span class="text-amber-300">$client</span> = <span class="text-cyan-400">OmniSignalClient</span>::<span class="text-emerald-400">create</span>([
+    <span class="text-amber-300">'meta'</span> => [
+        <span class="text-amber-300">'pixel_id'</span> => <span class="text-amber-300">'123456789'</span>,
+        <span class="text-amber-300">'access_token'</span> => <span class="text-amber-300">'EAAG...'</span>,
+    ],
+    <span class="text-amber-300">'tiktok'</span> => [
+        <span class="text-amber-300">'pixel_code'</span> => <span class="text-amber-300">'C12345'</span>,
+        <span class="text-amber-300">'access_token'</span> => <span class="text-amber-300">'token'</span>,
+    ],
+]);
+
+<span class="text-amber-300">$client</span>-><span class="text-emerald-400">record</span>(
+    eventName: <span class="text-amber-300">'Purchase'</span>,
+    value: <span class="text-cyan-300">149.00</span>,
+    currency: <span class="text-amber-300">'USD'</span>,
+    orderId: <span class="text-amber-300">'ORD-9021'</span>,
+    user: [<span class="text-amber-300">'email'</span> => <span class="text-amber-300">'buyer@example.com'</span>], <span class="text-slate-500">// Auto SHA-256 hashed</span>
+    clickIds: [<span class="text-amber-300">'fbclid'</span> => <span class="text-amber-300">$_COOKIE['omni_fbclid'] ?? null</span>]
+);</code></pre>
+                </div>
+            </section>
+
+            <!-- WooCommerce & WordPress Plugin -->
+            <section id="woocommerce" class="scroll-mt-28 pt-8 border-t border-slate-800/80">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 text-xs font-medium text-purple-400 mb-3 border border-purple-500/20">
+                    <span>🛍️ WordPress & WooCommerce</span>
+                </div>
+                <h2 class="text-2xl font-bold text-white">WordPress & WooCommerce Turnkey Plugin</h2>
+                <p class="mt-3 text-slate-400 text-sm leading-relaxed">
+                    Zero-code server-side attribution for WordPress stores. Auto-hooks to WooCommerce purchases and popular form builders:
+                </p>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
+                    <div class="p-5 rounded-2xl bg-slate-900/60 border border-slate-800">
+                        <h4 class="font-bold text-white text-sm">🛒 WooCommerce Auto-Tracking</h4>
+                        <p class="text-xs text-slate-400 mt-2 leading-relaxed">
+                            Automatically listens for <code class="text-slate-300 font-mono">woocommerce_payment_complete</code> and sends offline order signals with order IDs, tax, shipping, and currency deduplication.
+                        </p>
+                    </div>
+                    <div class="p-5 rounded-2xl bg-slate-900/60 border border-slate-800">
+                        <h4 class="font-bold text-white text-sm">📋 Universal Form Lead Capture</h4>
+                        <p class="text-xs text-slate-400 mt-2 leading-relaxed">
+                            Auto-captures form submissions from <strong>Contact Form 7</strong>, <strong>WPForms</strong>, <strong>Gravity Forms</strong>, and <strong>Elementor Pro</strong> with auto-hashed email and phone numbers.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="mt-6 p-4 rounded-xl bg-[#0c121e] border border-slate-800 text-xs text-slate-300 font-mono">
+                    Download zip from <a href="https://github.com/electrictomcat/omnisignal/tree/main/packages/wp-omnisignal" target="_blank" class="text-emerald-400 hover:underline">packages/wp-omnisignal</a> &bull; Upload via Plugins > Add New > Upload Plugin.
+                </div>
+            </section>
+
+            <!-- Client Script omnisignal.js -->
+            <section id="client-script" class="scroll-mt-28 pt-8 border-t border-slate-800/80">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 text-xs font-medium text-amber-400 mb-3 border border-amber-500/20">
+                    <span>⚡ 1KB Tracking Script</span>
+                </div>
+                <h2 class="text-2xl font-bold text-white">Client-Side Form Auto-Capture (`omnisignal.js`)</h2>
+                <p class="mt-3 text-slate-400 text-sm leading-relaxed">
+                    Include our lightweight (~1.2KB) script to persist landing parameters across subdomains and automatically inject hidden input fields into every HTML form on your page:
+                </p>
+
+                <div class="mt-4 rounded-2xl bg-[#0c121e] border border-slate-800 p-4 font-mono text-xs text-emerald-300">
+                    &lt;script src="https://omnisignal.dev/omnisignal.js" defer&gt;&lt;/script&gt;
                 </div>
             </section>
 
