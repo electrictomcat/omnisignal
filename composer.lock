@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8a056cdcdcbbdd040ac0112126f4e4ff",
+    "content-hash": "b069bb14144dc73b579de5c7e2bd622e",
     "packages": [
         {
             "name": "brick/math",
@@ -509,11 +509,17 @@
         },
         {
             "name": "electrictomcat/laravel-google-ads-conversions",
-            "version": "dev-development",
+            "version": "v1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/electrictomcat/laravel-google-ads-conversions.git",
+                "reference": "b7eb47901158dee5a6b52da4f10161b042358f00"
+            },
             "dist": {
-                "type": "path",
-                "url": "../laravel-google-ads-conversions",
-                "reference": "ae4d746d4b3e91500a3298db2cd878036569542a"
+                "type": "zip",
+                "url": "https://api.github.com/repos/electrictomcat/laravel-google-ads-conversions/zipball/b7eb47901158dee5a6b52da4f10161b042358f00",
+                "reference": "b7eb47901158dee5a6b52da4f10161b042358f00",
+                "shasum": ""
             },
             "require": {
                 "googleads/google-ads-php": "^33.4 || ^34.0",
@@ -536,12 +542,12 @@
             "type": "library",
             "extra": {
                 "laravel": {
-                    "providers": [
-                        "ElectricTomCat\\GoogleAdsConversions\\GoogleAdsConversionsServiceProvider"
-                    ],
                     "aliases": {
                         "GoogleAdsConversions": "ElectricTomCat\\GoogleAdsConversions\\Facades\\GoogleAdsConversions"
-                    }
+                    },
+                    "providers": [
+                        "ElectricTomCat\\GoogleAdsConversions\\GoogleAdsConversionsServiceProvider"
+                    ]
                 }
             },
             "autoload": {
@@ -550,51 +556,7 @@
                     "ElectricTomCat\\GoogleAdsConversions\\Database\\Factories\\": "database/factories/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "ElectricTomCat\\GoogleAdsConversions\\Tests\\": "tests/",
-                    "Workbench\\App\\": "workbench/app/",
-                    "Workbench\\Database\\Factories\\": "workbench/database/factories/",
-                    "Workbench\\Database\\Seeders\\": "workbench/database/seeders/"
-                }
-            },
-            "scripts": {
-                "post-autoload-dump": [
-                    "@clear",
-                    "@prepare",
-                    "@composer run prepare"
-                ],
-                "prepare": [
-                    "@php vendor/bin/testbench package:discover --ansi"
-                ],
-                "analyse": [
-                    "vendor/bin/phpstan analyse"
-                ],
-                "test": [
-                    "vendor/bin/pest"
-                ],
-                "test-coverage": [
-                    "vendor/bin/pest --coverage"
-                ],
-                "format": [
-                    "vendor/bin/pint"
-                ],
-                "clear": [
-                    "@php vendor/bin/testbench package:purge-skeleton --ansi"
-                ],
-                "build": [
-                    "@php vendor/bin/testbench workbench:build --ansi"
-                ],
-                "serve": [
-                    "Composer\\Config::disableProcessTimeout",
-                    "@build",
-                    "@php vendor/bin/testbench serve --ansi"
-                ],
-                "lint": [
-                    "@php vendor/bin/pint --ansi",
-                    "@php vendor/bin/phpstan analyse --verbose --ansi"
-                ]
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -609,6 +571,7 @@
             "description": "Drop-in offline conversion tracking for Laravel: captures GCLIDs from ad clicks, buffers conversions in cache, and uploads them to the Google Ads API.",
             "homepage": "https://github.com/electrictomcat/laravel-google-ads-conversions",
             "keywords": [
+                "PPC",
                 "adwords",
                 "analytics",
                 "attribution",
@@ -619,23 +582,20 @@
                 "laravel",
                 "lead-tracking",
                 "marketing",
-                "offline-conversions",
-                "ppc"
+                "offline-conversions"
             ],
             "support": {
+                "docs": "https://github.com/electrictomcat/laravel-google-ads-conversions#readme",
                 "issues": "https://github.com/electrictomcat/laravel-google-ads-conversions/issues",
-                "source": "https://github.com/electrictomcat/laravel-google-ads-conversions",
-                "docs": "https://github.com/electrictomcat/laravel-google-ads-conversions#readme"
+                "source": "https://github.com/electrictomcat/laravel-google-ads-conversions"
             },
             "funding": [
                 {
-                    "type": "github",
-                    "url": "https://github.com/sponsors/electrictomcat"
+                    "url": "https://github.com/sponsors/electrictomcat",
+                    "type": "github"
                 }
             ],
-            "transport-options": {
-                "relative": true
-            }
+            "time": "2026-08-31T17:29:30+00:00"
         },
         {
             "name": "firebase/php-jwt",
@@ -9265,9 +9225,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "electrictomcat/laravel-google-ads-conversions": 20
-    },
+    "stability-flags": {},
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

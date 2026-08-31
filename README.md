@@ -21,18 +21,7 @@ the Stripe listener).
 
 ## Local setup
 
-The app depends on the conversion engine through a **path repository**, so the
-package has to be checked out beside this repository:
-
-```
-Code/
-├── omnisignal/
-└── laravel-google-ads-conversions/
-```
-
 ```bash
-git clone git@github.com:electrictomcat/laravel-google-ads-conversions.git ../laravel-google-ads-conversions
-
 composer install
 cp .env.example .env
 php artisan key:generate
@@ -40,30 +29,22 @@ php artisan migrate
 npm install && npm run build
 ```
 
-### Deploying
+The conversion engine resolves from Packagist as
+`electrictomcat/laravel-google-ads-conversions:^1.0`, so nothing else needs to
+be on disk.
 
-> The path repository above is for local development only. It will not resolve
-> on a build server that has not checked the package out beside the app.
+### Working on the engine alongside the app
 
-For production, point Composer at the published package instead:
+To develop against a local checkout, add a path repository temporarily:
 
 ```bash
-composer config --unset repositories.laravel-google-ads-conversions
-composer require electrictomcat/laravel-google-ads-conversions:^2.0
+git clone git@github.com:electrictomcat/laravel-google-ads-conversions.git ../laravel-google-ads-conversions
+composer config repositories.engine path ../laravel-google-ads-conversions
+composer update electrictomcat/laravel-google-ads-conversions
 ```
 
-Until v2.0.0 is tagged on Packagist, use a VCS repository against the Git tag:
-
-```json
-"repositories": [
-    {
-        "type": "vcs",
-        "url": "https://github.com/electrictomcat/laravel-google-ads-conversions"
-    }
-]
-```
-
-CI checks the package out alongside the app (see `.github/workflows/ci.yml`).
+Undo it with `composer config --unset repositories.engine` before committing —
+a path repository does not resolve on a build server.
 
 ---
 

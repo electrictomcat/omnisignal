@@ -23,14 +23,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # The app depends on the conversion engine through a path repository
-      # during development, so the package has to be on disk beside it.
-      - name: Check out the conversion engine
-        uses: actions/checkout@v4
-        with:
-          repository: electrictomcat/laravel-google-ads-conversions
-          ref: main
-          path: ../laravel-google-ads-conversions
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -58,12 +50,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Check out the conversion engine
-        uses: actions/checkout@v4
-        with:
-          repository: electrictomcat/laravel-google-ads-conversions
-          ref: main
-          path: ../laravel-google-ads-conversions
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
