@@ -4,7 +4,7 @@ Tags: conversions api, capi, meta capi, offline conversions, woocommerce
 Requires at least: 6.0
 Tested up to: 6.9
 Requires PHP: 8.1
-Stable tag: 2.1.0
+Stable tag: 2.2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -21,7 +21,9 @@ Browser-based conversion pixels miss a large share of purchases to Safari ITP, a
 * **Microsoft Advertising (Bing)** — Offline Conversions, Campaign Management v13
 * **LinkedIn** — Conversions API
 
-Google Ads offline conversions require an OAuth application and are handled by the OmniSignal Laravel package and PHP SDK rather than this plugin. It is not offered here, and the plugin does not claim to send them.
+* **Google Ads** — connected at omnisignal.dev and uploaded on your behalf
+
+Google Ads is the one channel not configured inside WordPress. It requires an OAuth client secret and a Google Ads developer token, and a plugin's source code is public, so neither can ship here. You authorise your Google Ads account once at omnisignal.dev/portal and this plugin forwards those conversions to us to upload. The credential the plugin stores is scoped to this domain alone — it cannot read your licence key or affect your other sites, and deactivating the domain revokes it.
 
 = What it tracks =
 
@@ -74,6 +76,11 @@ The settings screen lists recent delivery failures with the message the platform
 Forwarded IP headers are only trusted when you opt in, because they can be spoofed on a server that is not actually behind a proxy. Add `add_filter( 'omnisignal_trust_proxy_headers', '__return_true' );` once you have confirmed your site sits behind one.
 
 == Changelog ==
+
+= 2.2.0 =
+* Added: Google Ads support, via a one-time account connection at omnisignal.dev. The plugin forwards those conversions rather than holding credentials it cannot safely store.
+* Added: the settings screen shows whether Google Ads is connected.
+* Changed: the site now authenticates to omnisignal.dev with a per-domain token issued at activation, instead of sending its licence key.
 
 = 2.1.0 =
 * Fixed: licence keys are now verified against omnisignal.dev. Any non-empty value previously displayed as an active Pro licence.

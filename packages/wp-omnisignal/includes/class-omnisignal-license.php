@@ -60,7 +60,15 @@ class OmniSignal_License
      */
     public static function state(): array
     {
-        $default = ['status' => 'unlicensed', 'tier' => '', 'message' => 'No licence key entered.', 'checked_at' => 0];
+        $default = [
+            'status' => 'unlicensed',
+            'tier' => '',
+            'message' => 'No licence key entered.',
+            'hosted_channels' => [],
+            'ingest_token' => '',
+            'ingest_url' => '',
+            'checked_at' => 0,
+        ];
 
         if (self::key() === '') {
             return $default;
@@ -103,6 +111,42 @@ class OmniSignal_License
     }
 
     /**
+     * Channels omnisignal.dev delivers on this customer's behalf.
+     *
+     * Google Ads is here rather than in the plugin because it needs an OAuth
+     * client secret and a developer token, and a GPL plugin's source is public.
+     *
+     * @return array<int, string>
+     */
+    public static function hosted_channels(): array
+    {
+        if (! self::is_valid()) {
+            return [];
+        }
+
+        $channels = self::state()['hosted_channels'] ?? [];
+
+        return is_array($channels) ? $channels : [];
+    }
+
+    /**
+     * The per-domain credential this site posts conversions with.
+     */
+    public static function ingest_token(): ?string
+    {
+        $token = self::state()['ingest_token'] ?? '';
+
+        return $token !== '' ? (string) $token : null;
+    }
+
+    public static function ingest_url(): string
+    {
+        $url = self::state()['ingest_url'] ?? '';
+
+        return $url !== '' ? (string) $url : 'https://omnisignal.dev/api/v1/conversions';
+    }
+
+    /**
      * Re-check the key with the API and activate this domain.
      *
      * @return array{status: string, tier: string, message: string, checked_at: int}
@@ -114,7 +158,15 @@ class OmniSignal_License
         if ($key === '') {
             delete_option(self::STATE_OPTION);
 
-            return ['status' => 'unlicensed', 'tier' => '', 'message' => 'No licence key entered.', 'checked_at' => time()];
+            return [
+                'status' => 'unlicensed',
+                'tier' => '',
+                'message' => 'No licence key entered.',
+                'hosted_channels' => [],
+                'ingest_token' => '',
+                'ingest_url' => '',
+                'checked_at' => time(),
+            ];
         }
 
         $state = self::request('activate', ['license_key' => $key, 'domain' => self::domain()]);
@@ -140,8 +192,21 @@ class OmniSignal_License
     }
 
     /**
+     * The last known-good state, so a temporary outage does not wipe the
+     * channel list and token a working site is already using.
+     *
+     * @return array<string, mixed>
+     */
+    private static function previous(): array
+    {
+        $state = get_option(self::STATE_OPTION, []);
+
+        return is_array($state) ? $state : [];
+    }
+
+    /**
      * @param  array<string, string>  $body
-     * @return array{status: string, tier: string, message: string, checked_at: int}
+     * @return array<string, mixed>
      */
     private static function request(string $endpoint, array $body): array
     {
@@ -152,12 +217,11 @@ class OmniSignal_License
         ]);
 
         if (is_wp_error($response)) {
-            return [
+            return array_merge(self::previous(), [
                 'status' => 'unreachable',
-                'tier' => '',
                 'message' => 'Could not reach omnisignal.dev: '.$response->get_error_message(),
                 'checked_at' => time(),
-            ];
+            ]);
         }
 
         $code = (int) wp_remote_retrieve_response_code($response);
@@ -165,12 +229,11 @@ class OmniSignal_License
         $data = is_array($data) ? $data : [];
 
         if ($code >= 500 || $code === 429) {
-            return [
+            return array_merge(self::previous(), [
                 'status' => 'unreachable',
-                'tier' => '',
                 'message' => 'omnisignal.dev is temporarily unavailable (HTTP '.$code.').',
                 'checked_at' => time(),
-            ];
+            ]);
         }
 
         if ($code === 200 && ! empty($data['activated'])) {
@@ -183,6 +246,15 @@ class OmniSignal_License
                     (int) ($data['activation_count'] ?? 1),
                     (int) ($data['activation_limit'] ?? 1)
                 ),
+
+                // Channels omnisignal.dev uploads for this customer, and the
+                // credential this site uses to hand them over. The token is
+                // scoped to this domain, so it cannot be used to reach the
+                // customer's licence key or their other sites.
+                'hosted_channels' => array_values((array) ($data['hosted_channels'] ?? [])),
+                'ingest_token' => (string) ($data['ingest_token'] ?? ''),
+                'ingest_url' => (string) ($data['ingest_url'] ?? self::API_BASE.'/../conversions'),
+
                 'checked_at' => time(),
             ];
         }
@@ -191,6 +263,9 @@ class OmniSignal_License
             'status' => 'invalid',
             'tier' => '',
             'message' => (string) ($data['message'] ?? 'This licence key was not accepted.'),
+            'hosted_channels' => [],
+            'ingest_token' => '',
+            'ingest_url' => '',
             'checked_at' => time(),
         ];
     }

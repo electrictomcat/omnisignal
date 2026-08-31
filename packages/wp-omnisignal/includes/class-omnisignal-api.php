@@ -60,6 +60,19 @@ class OmniSignal_API
     {
         $options = get_option('omnisignal_settings', []);
 
+        // Channels omnisignal.dev delivers on this site's behalf, because
+        // their credentials cannot live on a customer's server. Sent as one
+        // batched call rather than one per channel.
+        $hosted = OmniSignal_License::hosted_channels();
+
+        if ($hosted !== []) {
+            $result = self::send_hosted($payload, $hosted);
+
+            if (! $result['ok']) {
+                self::record_failure('omnisignal', $payload, $result['message']);
+            }
+        }
+
         foreach (['meta', 'tiktok', 'microsoft', 'linkedin'] as $channel) {
             $method = 'send_'.$channel;
 
@@ -132,6 +145,58 @@ class OmniSignal_API
         if (defined('WP_DEBUG') && WP_DEBUG) {
             error_log("[OmniSignal] {$channel} delivery failed: {$message}");
         }
+    }
+
+    // ------------------------------------------------------------- hosted
+
+    /**
+     * Hand a conversion to omnisignal.dev for the channels it hosts.
+     *
+     * @param  array<string, mixed>  $payload
+     * @param  array<int, string>  $channels
+     * @return array{ok: bool, message: string}
+     */
+    private static function send_hosted(array $payload, array $channels): array
+    {
+        $token = OmniSignal_License::ingest_token();
+
+        if (! $token) {
+            return ['ok' => false, 'message' => 'No ingest token. Re-save your licence key to reactivate this domain.'];
+        }
+
+        $event_id = ! empty($payload['order_id'])
+            ? 'ORDER_'.$payload['order_id']
+            : ($payload['event_name'] ?? 'Conversion').'_'.md5(wp_json_encode($payload));
+
+        $conversion = array_filter([
+            'event_name' => $payload['event_name'] ?? 'Purchase',
+            // Stable, so a retry from either side de-duplicates rather than
+            // recording the same order twice.
+            'event_id' => $event_id,
+            'value' => isset($payload['value']) ? (float) $payload['value'] : null,
+            'currency' => $payload['currency'] ?? null,
+            'timestamp' => time(),
+            'gclid' => $payload['gclid'] ?? null,
+            'gbraid' => $payload['gbraid'] ?? null,
+            'wbraid' => $payload['wbraid'] ?? null,
+            'email' => $payload['email'] ?? null,
+            'phone' => $payload['phone'] ?? null,
+        ], fn ($value) => $value !== null && $value !== '');
+
+        $result = self::post(OmniSignal_License::ingest_url(), [
+            'domain' => OmniSignal_License::domain(),
+            'conversions' => [$conversion],
+        ], ['Authorization' => 'Bearer '.$token]);
+
+        if ($result['ok']) {
+            return $result;
+        }
+
+        if ($result['status'] === 401) {
+            return ['ok' => false, 'message' => 'omnisignal.dev rejected this site\'s token. Re-save your licence key to reactivate the domain.'];
+        }
+
+        return $result;
     }
 
     // ------------------------------------------------------------------ Meta

@@ -325,6 +325,39 @@ class OmniSignal_Admin
                     </tr>
                 </table>
 
+                <!-- Google Ads via omnisignal.dev -->
+                <h2 style="font-size: 16px; margin-top: 30px; padding-bottom: 12px; border-bottom: 2px solid #f1f5f9; font-weight: 700;">🔴 Google Ads (connected at omnisignal.dev)</h2>
+                <table class="form-table">
+                    <tr>
+                        <th scope="row"><?php esc_html_e('Status', 'omnisignal'); ?></th>
+                        <td>
+                            <?php $hosted = OmniSignal_License::hosted_channels(); ?>
+                            <?php if (in_array('google', $hosted, true)) { ?>
+                                <span style="background:#dcfce7;color:#166534;padding:4px 10px;border-radius:12px;font-size:12px;font-weight:600;">
+                                    ● <?php esc_html_e('Connected', 'omnisignal'); ?>
+                                </span>
+                                <p class="description">
+                                    <?php esc_html_e('Purchases and leads from this site are uploaded to your Google Ads account.', 'omnisignal'); ?>
+                                    <a href="https://omnisignal.dev/portal" target="_blank"><?php esc_html_e('Manage the connection', 'omnisignal'); ?></a>
+                                </p>
+                            <?php } elseif (OmniSignal_License::is_valid()) { ?>
+                                <span style="background:#fef3c7;color:#92400e;padding:4px 10px;border-radius:12px;font-size:12px;font-weight:600;">
+                                    <?php esc_html_e('Not connected', 'omnisignal'); ?>
+                                </span>
+                                <p class="description">
+                                    <?php esc_html_e('Google Ads is authorised on omnisignal.dev rather than here, because it needs an OAuth client secret and a developer token that cannot ship inside a plugin.', 'omnisignal'); ?>
+                                    <br>
+                                    <a href="https://omnisignal.dev/portal" target="_blank"><strong><?php esc_html_e('Connect your Google Ads account →', 'omnisignal'); ?></strong></a>
+                                </p>
+                            <?php } else { ?>
+                                <p class="description">
+                                    <?php esc_html_e('Enter a valid licence key above to connect Google Ads.', 'omnisignal'); ?>
+                                </p>
+                            <?php } ?>
+                        </td>
+                    </tr>
+                </table>
+
                 <!-- Microsoft Advertising -->
                 <h2 style="font-size: 16px; margin-top: 30px; padding-bottom: 12px; border-bottom: 2px solid #f1f5f9; font-weight: 700;">🟦 Microsoft Advertising (Bing) Offline Conversions</h2>
                 <table class="form-table">

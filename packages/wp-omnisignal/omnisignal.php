@@ -6,7 +6,7 @@ use Automattic\WooCommerce\Utilities\FeaturesUtil;
  * Plugin Name: OmniSignal &bull; Server-Side Conversion Tracking & CAPI for WooCommerce & WordPress
  * Plugin URI: https://omnisignal.dev
  * Description: Pure Signal. Zero Noise. Server-side conversion tracking for WooCommerce and WordPress. Recovers ad conversions lost to ITP and ad-blockers, and sends them to Meta CAPI, TikTok Events API, Microsoft Advertising and LinkedIn.
- * Version: 2.1.0
+ * Version: 2.2.0
  * Author: OmniSignal
  * Author URI: https://omnisignal.dev
  * Text Domain: omnisignal
@@ -21,7 +21,7 @@ if (! defined('ABSPATH')) {
     exit;
 }
 
-define('OMNISIGNAL_VERSION', '2.1.0');
+define('OMNISIGNAL_VERSION', '2.2.0');
 define('OMNISIGNAL_PATH', plugin_dir_path(__FILE__));
 define('OMNISIGNAL_URL', plugin_dir_url(__FILE__));
 define('OMNISIGNAL_PLUGIN_BASENAME', plugin_basename(__FILE__));
