@@ -62,6 +62,50 @@ link, so a broken mailer means customers cannot reach their keys.
 
 ---
 
+## The hosted Google Ads connector
+
+Google Ads is the one channel a customer cannot configure inside their own site.
+It needs an OAuth client secret — which cannot ship in a GPL WordPress plugin
+whose source is public — and a developer token, which is issued against our
+manager account rather than each customer's. So the authorisation happens here
+and we upload on their behalf.
+
+```
+ Customer's site                    omnisignal.dev                  Google Ads
+      │                                   │                              │
+      │  1. activate(licence, domain)     │                              │
+      │ ────────────────────────────────► │                              │
+      │ ◄──── ingest_token (per domain) ──│                              │
+      │                                   │                              │
+      │                        2. customer authorises at /portal ──────► │
+      │                                   │ ◄──── refresh token ─────────│
+      │                                   │      (encrypted at rest)     │
+      │  3. POST /api/v1/conversions      │                              │
+      │ ────────────────────────────────► │  4. upload as the customer ► │
+```
+
+**The site never holds the licence key.** It authenticates with a token derived
+from `HMAC(licence key + domain)`, so a compromised WordPress install cannot
+read the key, reach the customer's other domains, or touch another customer.
+Deactivating a domain revokes its token; rotating the licence key revokes all of
+them. There is no second table of secrets to leak.
+
+Ingest de-duplicates on `event_id` for seven days, so a retry from the site
+never becomes a second conversion. A revoked grant marks the connection
+`needs_reauth` and stops, rather than retrying three times an hour forever.
+
+Requires `GOOGLE_ADS_OAUTH_CLIENT_ID`, `GOOGLE_ADS_OAUTH_CLIENT_SECRET` and
+`GOOGLE_ADS_DEVELOPER_TOKEN`. Without them the connect button reports that
+connections are unavailable rather than failing halfway through.
+
+> Uploading on a customer's behalf makes us a data processor for their
+> end-customers' hashed identifiers. That is a change in legal posture, not just
+> architecture: it needs a DPA with each customer and a sub-processor
+> disclosure. Only the channels listed above route through us — Meta, TikTok,
+> Microsoft and LinkedIn still send directly from the customer's own server.
+
+---
+
 ## Routes worth knowing
 
 | Route | Access |
@@ -71,6 +115,8 @@ link, so a broken mailer means customers cannot reach their keys.
 | `/portal/licences` | Signed link only, 30-minute expiry |
 | `/thanks` | Post-checkout receipt page |
 | `/api/v1/licenses/*` | Throttled per IP and per key |
+| `/api/v1/conversions` | Per-domain bearer token; throttled |
+| `/portal/connect/*` | Portal session from the emailed link |
 | `/webhooks/lemonsqueezy` | HMAC-verified |
 | `/ad-conversions` | Disabled unless `AD_CONVERSIONS_DASHBOARD_ENABLED=true`; HTTP Basic against the users table |
 
