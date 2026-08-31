@@ -56,6 +56,7 @@ class OmniSignalServiceProvider extends ServiceProvider
                 SyncConversionsCommand::class,
                 TestConnectionCommand::class,
                 \App\OmniSignal\Commands\TestEventCommand::class,
+                \App\OmniSignal\Commands\BuildPluginCommand::class,
             ]);
         }
 

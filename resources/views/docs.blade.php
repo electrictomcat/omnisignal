@@ -382,8 +382,15 @@ php artisan migrate</code></pre>
                     </div>
                 </div>
 
-                <div class="mt-6 p-4 rounded-xl bg-[#0c121e] border border-slate-800 text-xs text-slate-300 font-mono">
-                    Download zip from <a href="https://github.com/electrictomcat/omnisignal/tree/main/packages/wp-omnisignal" target="_blank" class="text-emerald-400 hover:underline">packages/wp-omnisignal</a> &bull; Upload via Plugins > Add New > Upload Plugin.
+                <div class="mt-6 p-6 rounded-2xl bg-[#0c121e] border border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <div>
+                        <h4 class="text-sm font-bold text-white">Download Ready-to-Install ZIP</h4>
+                        <p class="text-xs text-slate-400 mt-1">Upload via <code class="text-slate-300 font-mono">wp-admin &gt; Plugins &gt; Add New &gt; Upload Plugin</code>.</p>
+                    </div>
+                    <a href="/downloads/omnisignal-woocommerce.zip" download class="px-5 py-2.5 rounded-xl bg-purple-500 hover:bg-purple-400 text-white font-bold text-xs transition shadow-lg shadow-purple-500/20 flex items-center gap-2">
+                        <span>⬇️</span>
+                        <span>Download Plugin (.zip)</span>
+                    </a>
                 </div>
             </section>
 

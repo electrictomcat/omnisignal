@@ -23,6 +23,7 @@
     "autoload": {
         "psr-4": {
             "App\\": "app/",
+            "OmniSignal\\": "packages/php-sdk/src/",
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/"
         }
