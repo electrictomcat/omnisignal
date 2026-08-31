@@ -2,48 +2,18 @@
 
 namespace App\Models;
 
-use App\OmniSignal\Contracts\HasConversions;
-use App\OmniSignal\Models\Concerns\HasConversionsTrait;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Casts\AsCollection;
+use ElectricTomCat\GoogleAdsConversions\Models\Lead as PackageLead;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Prunable;
 
-class Lead extends Model implements HasConversions
+/**
+ * The application's lead model.
+ *
+ * Everything about conversion storage, pruning and the HasConversions contract
+ * comes from the package. This subclass exists so the app owns the class name
+ * (and can add app-only relations later) without re-implementing the engine —
+ * the previous copy had drifted and no longer held the retention fix.
+ */
+class Lead extends PackageLead
 {
-    use HasConversionsTrait;
     use HasFactory;
-    use Prunable;
-
-    protected $fillable = [
-        'gclid',
-        'gbraid',
-        'wbraid',
-        'visitor_id',
-        'conversions',
-        'landing_page',
-        'source',
-        'utm_source',
-        'utm_medium',
-        'utm_campaign',
-        'utm_content',
-        'utm_term',
-        'gad_source',
-        'gad_campaignid',
-    ];
-
-    protected $casts = [
-        'conversions' => AsCollection::class,
-    ];
-
-    /**
-     * Get the prunable model query for GDPR / retention compliance.
-     */
-    public function prunable(): Builder
-    {
-        $retentionDays = (int) config('omnisignal.privacy.retention_days', 90);
-
-        return static::where('updated_at', '<=', now()->subDays($retentionDays));
-    }
 }

@@ -2,7 +2,7 @@
 
 namespace App\OmniSignal\Listeners;
 
-use App\OmniSignal\Facades\GoogleAdsConversions;
+use ElectricTomCat\GoogleAdsConversions\Facades\GoogleAdsConversions;
 
 class OmniSignalStripeListener
 {

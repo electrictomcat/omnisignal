@@ -2,8 +2,8 @@
 
 namespace App\OmniSignal\Commands;
 
-use App\OmniSignal\ConversionManager;
-use App\OmniSignal\DTO\ConversionPayload;
+use ElectricTomCat\GoogleAdsConversions\ConversionManager;
+use ElectricTomCat\GoogleAdsConversions\DTO\ConversionPayload;
 use Illuminate\Console\Command;
 
 class TestEventCommand extends Command
@@ -25,13 +25,13 @@ class TestEventCommand extends Command
         $currency = (string) $this->option('currency');
         $orderId = $this->option('order-id') ?: 'TEST_'.time();
 
-        $this->info("🕉️ OmniSignal Test Event Dispatcher");
-        $this->line("────────────────────────────────────────");
+        $this->info('🕉️ OmniSignal Test Event Dispatcher');
+        $this->line('────────────────────────────────────────');
         $this->line("Event:    <fg=cyan>{$eventName}</>");
         $this->line("Value:    <fg=green>{$currency} {$value}</>");
         $this->line("Order ID: <fg=yellow>{$orderId}</>");
         $this->line("Target:   <fg=magenta>{$channel}</>");
-        $this->line("────────────────────────────────────────");
+        $this->line('────────────────────────────────────────');
 
         $payload = new ConversionPayload(
             eventName: $eventName,
@@ -57,6 +57,7 @@ class TestEventCommand extends Command
                 $driver = $manager->driver($ch);
                 if (! $driver->isConfigured()) {
                     $this->warn("⚠️  [{$ch}] Skipping: credentials not configured in .env");
+
                     continue;
                 }
 
@@ -75,7 +76,7 @@ class TestEventCommand extends Command
         }
 
         $this->newLine();
-        $this->info("✨ Test event cycle complete. Check your ad platform event manager or /dashboard!");
+        $this->info('✨ Test event cycle complete. Check your ad platform event manager or /dashboard!');
 
         return Command::SUCCESS;
     }

@@ -17,10 +17,11 @@ class BuildPluginCommand extends Command
 
         $sourceDir = base_path('packages/wp-omnisignal');
         $outputDir = public_path('downloads');
-        $zipFile = $outputDir . '/omnisignal-woocommerce.zip';
+        $zipFile = $outputDir.'/omnisignal-woocommerce.zip';
 
         if (! is_dir($sourceDir)) {
             $this->error("Source directory not found: {$sourceDir}");
+
             return Command::FAILURE;
         }
 
@@ -32,9 +33,10 @@ class BuildPluginCommand extends Command
             unlink($zipFile);
         }
 
-        $zip = new ZipArchive();
+        $zip = new ZipArchive;
         if ($zip->open($zipFile, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== true) {
             $this->error("Failed to create zip file: {$zipFile}");
+
             return Command::FAILURE;
         }
 
@@ -47,7 +49,7 @@ class BuildPluginCommand extends Command
         foreach ($files as $name => $file) {
             if (! $file->isDir()) {
                 $filePath = $file->getRealPath();
-                $relativePath = 'wp-omnisignal/' . substr($filePath, strlen($sourceDir) + 1);
+                $relativePath = 'wp-omnisignal/'.substr($filePath, strlen($sourceDir) + 1);
 
                 $zip->addFile($filePath, $relativePath);
                 $count++;
@@ -58,7 +60,7 @@ class BuildPluginCommand extends Command
 
         $size = round(filesize($zipFile) / 1024, 1);
         $this->info("✅ Successfully packaged {$count} files into {$zipFile} ({$size} KB).");
-        $this->line("Download URL: <fg=green>" . url('downloads/omnisignal-woocommerce.zip') . "</>");
+        $this->line('Download URL: <fg=green>'.url('downloads/omnisignal-woocommerce.zip').'</>');
 
         return Command::SUCCESS;
     }
