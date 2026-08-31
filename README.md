@@ -8,7 +8,7 @@ This repository holds three things:
 | Path | What it is |
 | :-- | :-- |
 | `app/`, `routes/`, `resources/` | The Laravel app: marketing site, licence portal, Lemon Squeezy checkout and webhooks |
-| `packages/php-sdk/` | `omnisignal/php-sdk` — a dependency-free PHP client for the five ad channels |
+| `packages/php-sdk/` | `electrictomcat/omnisignal-php-sdk` — a dependency-free PHP client for the five ad channels |
 | `packages/wp-omnisignal/` | The WordPress / WooCommerce plugin |
 
 The conversion engine itself is **not** here. It lives in

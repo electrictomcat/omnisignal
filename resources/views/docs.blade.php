@@ -321,7 +321,7 @@ php artisan migrate</code></pre>
 
                 <div class="mt-4 rounded-2xl bg-[#0c121e] border border-slate-800 overflow-hidden">
                     <div class="px-4 py-2 bg-[#070b12] border-b border-slate-800">
-                        <span class="text-xs font-mono text-slate-400">composer require omnisignal/php-sdk</span>
+                        <span class="text-xs font-mono text-slate-400">composer require electrictomcat/omnisignal-php-sdk</span>
                     </div>
                     <pre class="p-5 text-sm text-slate-300 font-mono leading-relaxed"><code><span class="text-emerald-400">use</span> OmniSignal\OmniSignalClient;
 

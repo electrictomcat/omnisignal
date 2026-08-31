@@ -18,7 +18,7 @@ success with nothing sent.
 Once published to Packagist:
 
 ```bash
-composer require omnisignal/php-sdk
+composer require electrictomcat/omnisignal-php-sdk
 ```
 
 Until then, point Composer at the repository:
@@ -28,7 +28,7 @@ Until then, point Composer at the repository:
     "repositories": [
         { "type": "vcs", "url": "https://github.com/electrictomcat/omnisignal" }
     ],
-    "require": { "omnisignal/php-sdk": "dev-main" }
+    "require": { "electrictomcat/omnisignal-php-sdk": "dev-main" }
 }
 ```
 

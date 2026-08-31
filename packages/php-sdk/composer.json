@@ -1,5 +1,5 @@
 {
-    "name": "omnisignal/php-sdk",
+    "name": "electrictomcat/omnisignal-php-sdk",
     "description": "Zero-dependency Universal PHP SDK for OmniSignal server-side offline conversion tracking across Google Ads, Meta CAPI, TikTok, LinkedIn, and Microsoft Ads.",
     "keywords": ["omnisignal", "offline-conversions", "meta-capi", "google-ads", "tiktok-events", "conversion-tracking"],
     "type": "library",
