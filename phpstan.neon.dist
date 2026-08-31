@@ -10,4 +10,4 @@ parameters:
         - routes
         - packages/php-sdk/src
     excludePaths:
-        - packages/php-sdk/vendor
+        - packages/php-sdk/vendor (?)

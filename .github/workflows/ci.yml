@@ -23,16 +23,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
           extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, intl, fileinfo
           coverage: none
+          tools: composer:v2
 
       - name: Install composer dependencies
         run: composer install --prefer-dist --no-interaction --no-progress
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Prepare environment
         run: |
@@ -41,6 +43,9 @@ jobs:
 
       - name: Run tests
         run: php artisan test
+        env:
+          DB_CONNECTION: sqlite
+          DB_DATABASE: ':memory:'
 
   static-analysis:
     name: Static analysis
@@ -50,18 +55,21 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.4'
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, intl, fileinfo
           coverage: none
+          tools: composer:v2
 
       - name: Install composer dependencies
         run: composer install --prefer-dist --no-interaction --no-progress
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run PHPStan
-        run: vendor/bin/phpstan analyse --no-progress --error-format=github
+        run: vendor/bin/phpstan analyse --memory-limit=1G --no-progress --error-format=github
 
   code-style:
     name: Code style
@@ -76,9 +84,12 @@ jobs:
         with:
           php-version: '8.4'
           coverage: none
+          tools: composer:v2
 
       - name: Install composer dependencies
         run: composer install --prefer-dist --no-interaction --no-progress --no-scripts
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Check formatting
         run: vendor/bin/pint --test
