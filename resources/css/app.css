@@ -1,9 +1,73 @@
 @import 'tailwindcss';
 
+@source '../views';
+@source '../js';
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 
+/*
+|--------------------------------------------------------------------------
+| Typography
+|--------------------------------------------------------------------------
+|
+| Faces are self-hosted through laravel-vite-plugin's font handling, so no
+| request leaves the visitor's browser for a third-party font CDN. That
+| matters here: the product is sold on privacy-respecting tracking.
+|
+*/
+
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+body {
+    font-family: var(--font-sans);
+}
+
+code,
+pre,
+.font-mono {
+    font-family: var(--font-mono);
+}
+
+/*
+|--------------------------------------------------------------------------
+| Ambient background wash
+|--------------------------------------------------------------------------
+|
+| Three intensities, matching what the pages used when each carried its own
+| inline <style> block.
+|
+*/
+
+.radial-zen {
+    background: radial-gradient(
+        circle at 50% 10%,
+        rgba(16, 185, 129, 0.08) 0%,
+        rgba(6, 182, 212, 0.03) 30%,
+        transparent 65%
+    );
+}
+
+.radial-zen-mid {
+    background: radial-gradient(
+        circle at 50% 10%,
+        rgba(16, 185, 129, 0.1) 0%,
+        rgba(6, 182, 212, 0.04) 30%,
+        transparent 65%
+    );
+}
+
+.radial-zen-hero {
+    background: radial-gradient(
+        circle at 50% 20%,
+        rgba(16, 185, 129, 0.12) 0%,
+        rgba(6, 182, 212, 0.05) 35%,
+        transparent 70%
+    );
+}
+
+.glow-lotus {
+    box-shadow: 0 0 50px -10px rgba(16, 185, 129, 0.25);
 }

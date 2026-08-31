@@ -4,17 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Documentation & Knowledge Base &bull; OmniSignal (omnisignal.dev)</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; }
-        code, pre, .font-mono { font-family: 'JetBrains Mono', monospace; }
-        .radial-zen {
-            background: radial-gradient(circle at 50% 10%, rgba(16, 185, 129, 0.08) 0%, rgba(6, 182, 212, 0.03) 30%, transparent 65%);
-        }
-    </style>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="bg-[#090D16] text-slate-200 antialiased selection:bg-emerald-500/20 selection:text-emerald-300">
 
@@ -141,7 +131,7 @@ php artisan migrate</code></pre>
                     <pre class="p-4 text-sm text-slate-300 font-mono"><code><span class="text-slate-500">// bootstrap/app.php</span>
 -><span class="text-cyan-400">withMiddleware</span>(<span class="text-emerald-400">function</span> (Middleware <span class="text-amber-300">$middleware</span>) {
     <span class="text-amber-300">$middleware</span>-><span class="text-cyan-400">web</span>(append: [
-        \App\OmniSignal\Http\Middleware\CaptureGclid::<span class="text-emerald-400">class</span>,
+        \ElectricTomCat\GoogleAdsConversions\Http\Middleware\CaptureGclid::<span class="text-emerald-400">class</span>,
     ]);
 })</code></pre>
                 </div>
@@ -181,7 +171,7 @@ php artisan migrate</code></pre>
                 </p>
 
                 <div class="mt-6 rounded-2xl bg-[#0c121e] border border-slate-800 overflow-hidden">
-                    <pre class="p-5 text-sm text-slate-300 font-mono leading-relaxed"><code><span class="text-emerald-400">use</span> App\OmniSignal\Facades\OmniSignal;
+                    <pre class="p-5 text-sm text-slate-300 font-mono leading-relaxed"><code><span class="text-emerald-400">use</span> ElectricTomCat\GoogleAdsConversions\Facades\GoogleAdsConversions;
 
 <span class="text-cyan-400">OmniSignal</span>::<span class="text-emerald-400">record</span>(
     eventName: <span class="text-amber-300">'Demo Booked'</span>,
@@ -253,7 +243,7 @@ php artisan migrate</code></pre>
                 </p>
 
                 <div class="mt-6 rounded-2xl bg-[#0c121e] border border-slate-800 overflow-hidden">
-                    <pre class="p-5 text-sm text-slate-300 font-mono leading-relaxed"><code><span class="text-emerald-400">use</span> App\OmniSignal\Facades\OmniSignal;
+                    <pre class="p-5 text-sm text-slate-300 font-mono leading-relaxed"><code><span class="text-emerald-400">use</span> ElectricTomCat\GoogleAdsConversions\Facades\GoogleAdsConversions;
 
 <span class="text-emerald-400">public function</span> <span class="text-cyan-400">test_booking_records_offline_conversion</span>()
 {

@@ -4,26 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OmniSignal &bull; Pure Signal. Zero Noise. &bull; Attribution Nirvana for Laravel & WordPress</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script src="https://assets.lemonsqueezy.com/lemon.js" defer></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; }
-        code, pre, .font-mono { font-family: 'JetBrains Mono', monospace; }
-        .radial-zen {
-            background: radial-gradient(circle at 50% 20%, rgba(16, 185, 129, 0.12) 0%, rgba(6, 182, 212, 0.05) 35%, transparent 70%);
-        }
-        .glow-lotus {
-            box-shadow: 0 0 50px -10px rgba(16, 185, 129, 0.25);
-        }
-    </style>
 </head>
 <body class="bg-[#090D16] text-slate-200 antialiased selection:bg-emerald-500/20 selection:text-emerald-300">
 
     <!-- Ambient Zen Halo -->
-    <div class="fixed inset-0 radial-zen pointer-events-none -z-10"></div>
+    <div class="fixed inset-0 radial-zen-hero pointer-events-none -z-10"></div>
 
     <!-- Navigation -->
     <header class="sticky top-0 z-50 backdrop-blur-md bg-[#090D16]/90 border-b border-slate-800/80">
@@ -185,7 +172,7 @@
                         <span>Zen Architecture</span>
                     </div>
                     <h2 class="text-3xl sm:text-4xl font-extrabold text-white">Engineered for High-Throughput Nirvana</h2>
-                    <p class="mt-4 text-slate-400 text-base">Decouples conversion recording from external API latency while ensuring 100% attribution reliability.</p>
+                    <p class="mt-4 text-slate-400 text-base">Decouples conversion recording from external API latency, so a slow or failing ad platform never blocks a checkout or drops a conversion.</p>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
