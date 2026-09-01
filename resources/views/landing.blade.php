@@ -364,6 +364,55 @@
                     </table>
                 </div>
 
+                <!-- What Customers Pay For Breakdown Grid -->
+                <div class="mt-8 mb-16 text-left">
+                    <h3 class="text-xl font-bold text-white text-center mb-8">What You Get with OmniSignal Pro</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="p-6 rounded-2xl bg-slate-900/40 border border-slate-800">
+                            <div class="text-2xl mb-2">🌐</div>
+                            <h4 class="font-bold text-white text-base">Multi-Channel CAPI Fan-Out</h4>
+                            <p class="text-slate-400 text-xs mt-2 leading-relaxed">
+                                Don't stop at Google. Broadcast every conversion across <strong>Meta CAPI (v20.0)</strong>, <strong>TikTok Events API</strong>, <strong>LinkedIn</strong>, and <strong>Microsoft Advertising</strong> simultaneously.
+                            </p>
+                        </div>
+                        <div class="p-6 rounded-2xl bg-slate-900/40 border border-slate-800">
+                            <div class="text-2xl mb-2">📊</div>
+                            <h4 class="font-bold text-white text-base">Live Analytics Stream Dashboard</h4>
+                            <p class="text-slate-400 text-xs mt-2 leading-relaxed">
+                                In-app real-time conversion stream, Event Match Quality (EMQ) scores, delivery health checks, and revenue recovery metrics right inside your admin.
+                            </p>
+                        </div>
+                        <div class="p-6 rounded-2xl bg-slate-900/40 border border-slate-800">
+                            <div class="text-2xl mb-2">🛍️</div>
+                            <h4 class="font-bold text-white text-base">WooCommerce & 6 Form Builders</h4>
+                            <p class="text-slate-400 text-xs mt-2 leading-relaxed">
+                                Full eCommerce funnel tracking (AddToCart, Checkout, Purchase, Refund) + auto lead capture for CF7, WPForms, Gravity Forms, Elementor, Fluent Forms, and Ninja Forms.
+                            </p>
+                        </div>
+                        <div class="p-6 rounded-2xl bg-slate-900/40 border border-slate-800">
+                            <div class="text-2xl mb-2">💳</div>
+                            <h4 class="font-bold text-white text-base">Automated SaaS Webhooks</h4>
+                            <p class="text-slate-400 text-xs mt-2 leading-relaxed">
+                                Pre-built drop-in listeners for <strong>Stripe</strong> and <strong>Lemon Squeezy</strong> webhooks that record offline conversions automatically when charges and invoices succeed.
+                            </p>
+                        </div>
+                        <div class="p-6 rounded-2xl bg-slate-900/40 border border-slate-800">
+                            <div class="text-2xl mb-2">🐘</div>
+                            <h4 class="font-bold text-white text-base">Universal Standalone PHP SDK</h4>
+                            <p class="text-slate-400 text-xs mt-2 leading-relaxed">
+                                Zero-dependency client for Symfony, Drupal, Statamic, custom CRMs, or raw PHP microservices with automatic SHA-256 first-party hashing.
+                            </p>
+                        </div>
+                        <div class="p-6 rounded-2xl bg-slate-900/40 border border-slate-800">
+                            <div class="text-2xl mb-2">🔑</div>
+                            <h4 class="font-bold text-white text-base">License Portal & Priority Support</h4>
+                            <p class="text-slate-400 text-xs mt-2 leading-relaxed">
+                                Self-service license hub to manage and deactivate domain activations, download official tax receipts, and get fast developer support.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
                     <!-- Starter -->
                     <div class="rounded-3xl bg-slate-900/60 p-8 border border-slate-800 hover:border-slate-700 transition flex flex-col justify-between">
