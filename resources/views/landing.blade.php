@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OmniSignal &bull; Pure Signal. Zero Noise. &bull; Attribution Nirvana for Laravel & WordPress</title>
+    <title>OmniSignal &bull; Pure Signal. Zero Noise. &bull; Server-Side Conversion Tracking for Laravel & WordPress</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script src="https://assets.lemonsqueezy.com/lemon.js" defer></script>
 </head>
@@ -33,7 +33,7 @@
                 <a href="#channels" class="hover:text-emerald-400 transition">Channels</a>
                 <a href="#features" class="hover:text-emerald-400 transition">Features</a>
                 <a href="#calculator" class="hover:text-emerald-400 transition">ROAS Calculator</a>
-                <a href="#privacy" class="hover:text-emerald-400 transition">Privacy Nirvana</a>
+                <a href="#privacy" class="hover:text-emerald-400 transition">Data Privacy</a>
                 <a href="#pricing" class="hover:text-emerald-400 transition">Pricing</a>
                 <a href="/docs" class="hover:text-emerald-400 transition flex items-center gap-1">
                     <span>Docs</span>
@@ -48,7 +48,7 @@
 
             <div class="hidden md:flex items-center space-x-4">
                 <a href="#pricing" class="rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 px-5 py-2.5 text-sm font-bold shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/30 transition transform active:scale-95">
-                    Attain Nirvana →
+                    Choose Plan →
                 </a>
             </div>
 
@@ -67,12 +67,12 @@
             <a href="#channels" class="block text-slate-300 hover:text-emerald-400 py-1 text-sm font-medium">Channels</a>
             <a href="#features" class="block text-slate-300 hover:text-emerald-400 py-1 text-sm font-medium">Features</a>
             <a href="#calculator" class="block text-slate-300 hover:text-emerald-400 py-1 text-sm font-medium">ROAS Calculator</a>
-            <a href="#privacy" class="block text-slate-300 hover:text-emerald-400 py-1 text-sm font-medium">Privacy Nirvana</a>
+            <a href="#privacy" class="block text-slate-300 hover:text-emerald-400 py-1 text-sm font-medium">Data Privacy</a>
             <a href="#pricing" class="block text-slate-300 hover:text-emerald-400 py-1 text-sm font-medium">Pricing</a>
             <a href="/docs" class="block text-slate-300 hover:text-cyan-400 py-1 text-sm font-medium">Documentation & KB</a>
             <a href="/portal" class="block text-slate-300 hover:text-emerald-400 py-1 text-sm font-medium">License & Account Portal</a>
             <a href="/dashboard" class="block text-emerald-400 py-1 text-sm font-medium">Live Dashboard</a>
-            <a href="#pricing" class="block text-center mt-2 rounded-xl bg-emerald-500 text-slate-950 py-2.5 text-sm font-bold">Attain Nirvana →</a>
+            <a href="#pricing" class="block text-center mt-2 rounded-xl bg-emerald-500 text-slate-950 py-2.5 text-sm font-bold">Choose Plan →</a>
         </div>
     </header>
 
@@ -90,7 +90,7 @@
                 <!-- Headline -->
                 <h1 class="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-white leading-[1.1]">
                     Quiet the tracking chaos.<br>
-                    <span class="bg-gradient-to-r from-emerald-400 via-cyan-400 to-indigo-400 bg-clip-text text-transparent">Attain Attribution Nirvana.</span>
+                    <span class="bg-gradient-to-r from-emerald-400 via-cyan-400 to-indigo-400 bg-clip-text text-transparent">Attain Full Attribution Clarity.</span>
                 </h1>
 
                 <!-- Subtitle -->
@@ -123,7 +123,7 @@
                         </div>
                         <span class="text-xs font-mono text-emerald-400/80">⚡ 1-Line Fan-Out</span>
                     </div>
-                    <pre class="p-6 text-sm leading-relaxed overflow-x-auto text-slate-300 font-mono"><code><span class="text-slate-500">// Attain conversion nirvana across all ad platforms</span>
+                    <pre class="p-6 text-sm leading-relaxed overflow-x-auto text-slate-300 font-mono"><code><span class="text-slate-500">// Pure signal attribution across all ad platforms</span>
 <span class="text-cyan-400">OmniSignal</span>::<span class="text-emerald-400">record</span>(
     eventName: <span class="text-amber-300">'Demo Booked'</span>,
     value: <span class="text-cyan-300">250.00</span>,
@@ -171,7 +171,7 @@
                     <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 text-xs font-semibold text-emerald-400 mb-3 border border-emerald-500/20">
                         <span>Zen Architecture</span>
                     </div>
-                    <h2 class="text-3xl sm:text-4xl font-extrabold text-white">Engineered for High-Throughput Nirvana</h2>
+                    <h2 class="text-3xl sm:text-4xl font-extrabold text-white">Engineered for High-Throughput Reliability</h2>
                     <p class="mt-4 text-slate-400 text-base">Decouples conversion recording from external API latency, so a slow or failing ad platform never blocks a checkout or drops a conversion.</p>
                 </div>
 
@@ -268,14 +268,14 @@
             </div>
         </section>
 
-        <!-- Privacy Nirvana Section -->
+        <!-- Data Privacy Section -->
         <section id="privacy" class="py-24 scroll-mt-20 relative">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center max-w-3xl mx-auto mb-16">
                     <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 text-xs font-semibold text-indigo-400 mb-3 border border-indigo-500/20">
                         <span>🇪🇺 GDPR & ePrivacy Ready</span>
                     </div>
-                    <h2 class="text-3xl sm:text-4xl font-extrabold text-white">Privacy Nirvana: Strict Data Minimization</h2>
+                    <h2 class="text-3xl sm:text-4xl font-extrabold text-white">Data Privacy: Strict Minimization & Consent Mode v2</h2>
                     <p class="mt-4 text-slate-400 text-base">Designed for strict European and UK compliance standards without sacrificing conversion match rates.</p>
                 </div>
 
@@ -312,7 +312,7 @@
                     <span>💎 Transparent Value Matrix</span>
                 </div>
                 <h2 class="text-3xl sm:text-4xl font-extrabold text-white">Free Community Core & Pro Superpowers</h2>
-                <p class="mt-3 text-slate-400 max-w-2xl mx-auto">Start free with our open-source Google Ads engine, or attain total multi-network nirvana with OmniSignal Pro.</p>
+                <p class="mt-3 text-slate-400 max-w-2xl mx-auto">Start free with our open-source Google Ads engine, or unlock total multi-network tracking with OmniSignal Pro.</p>
 
                 <!-- Free vs Pro Comparison Matrix -->
                 <div class="max-w-4xl mx-auto mt-12 mb-16 rounded-2xl bg-slate-900/60 border border-slate-800 overflow-hidden text-left shadow-xl">
@@ -425,7 +425,7 @@
                             </div>
 
                             <ul class="mt-8 space-y-3.5 text-sm text-slate-300">
-                                <li class="flex items-center gap-3"><span class="text-emerald-400">✓</span> 1 Production Domain</li>
+                                <li class="flex items-center gap-3"><span class="text-emerald-400">✓</span> <strong>1 Production Domain</strong></li>
                                 <li class="flex items-center gap-3"><span class="text-emerald-400">✓</span> All 5 Ad Channels (Google, Meta, etc.)</li>
                                 <li class="flex items-center gap-3"><span class="text-emerald-400">✓</span> In-App Embedded Analytics Dashboard</li>
                                 <li class="flex items-center gap-3"><span class="text-emerald-400">✓</span> 1 Year of Updates & Security Fixes</li>
@@ -438,9 +438,6 @@
 
                     <!-- Pro (Featured) -->
                     <div class="rounded-3xl bg-slate-900 p-8 border-2 border-emerald-500 relative shadow-2xl flex flex-col justify-between glow-lotus">
-                        <div class="absolute -top-4 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-emerald-500 text-slate-950 font-bold text-xs uppercase tracking-wider">
-                            Most Serene Choice
-                        </div>
                         <div>
                             <h3 class="text-xl font-bold text-white">Pro Developer</h3>
                             <p class="text-xs text-slate-400 mt-1">For indie creators and multi-project teams</p>

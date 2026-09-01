@@ -137,7 +137,7 @@ class OmniSignal_Admin
                     <div style="display: flex; align-items: center; gap: 14px;">
                         <span style="font-size: 32px;">🕉️</span>
                         <div>
-                            <h1 style="color: #fff; font-size: 24px; margin: 0; font-weight: 700;">OmniSignal &bull; Attribution Nirvana</h1>
+                            <h1 style="color: #fff; font-size: 24px; margin: 0; font-weight: 700;">OmniSignal &bull; Conversion Tracking</h1>
                             <p style="color: #94a3b8; font-size: 13px; margin: 4px 0 0 0;">Server-Side Offline Conversion Tracking for WooCommerce (<a href="https://omnisignal.dev" target="_blank" style="color: #34d399; text-decoration: none;">omnisignal.dev</a>)</p>
                         </div>
                     </div>

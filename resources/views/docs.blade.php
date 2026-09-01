@@ -27,7 +27,7 @@
                 </a>
 
                 <div class="hidden sm:block h-5 w-px bg-slate-800"></div>
-                <span class="hidden sm:inline-block text-xs text-slate-400 font-medium">Attribution Nirvana Knowledge Base</span>
+                <span class="hidden sm:inline-block text-xs text-slate-400 font-medium">Knowledge Base & Documentation</span>
             </div>
 
             <div class="flex items-center space-x-4">

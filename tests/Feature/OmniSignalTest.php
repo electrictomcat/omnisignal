@@ -19,7 +19,7 @@ class OmniSignalTest extends TestCase
 
         $response->assertOk();
         $response->assertSee('OmniSignal');
-        $response->assertSee('Attribution Nirvana');
+        $response->assertSee('Pure Signal. Zero Noise.');
         $response->assertSee('How much lost ad revenue will you recover?');
         $response->assertSee('omnisignal.dev');
     }

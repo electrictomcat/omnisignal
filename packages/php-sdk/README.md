@@ -1,6 +1,6 @@
 # OmniSignal Universal PHP SDK
 
-**Pure Signal. Zero Noise. &bull; Attribution Nirvana for Any PHP Application**
+**Pure Signal. Zero Noise. &bull; Server-Side Conversion Tracking for Any PHP Application**
 
 Zero-dependency PHP client for sending server-side offline conversions to
 **Google Ads**, **Meta CAPI**, **TikTok Events API**, **LinkedIn CAPI** and
