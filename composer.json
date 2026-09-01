@@ -6,7 +6,7 @@
     "keywords": ["conversions-api", "offline-conversions", "google-ads", "meta-capi", "attribution"],
     "license": "MIT",
     "require": {
-        "php": "^8.3",
+        "php": "^8.4",
         "electrictomcat/laravel-google-ads-conversions": "^1.0",
         "googleads/google-ads-php": "^34.0",
         "laravel/framework": "^13.17",

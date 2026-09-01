@@ -18,7 +18,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ['8.3', '8.4']
+        php: ['8.4']
 
     steps:
       - uses: actions/checkout@v4
@@ -30,6 +30,17 @@ jobs:
           extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, intl, fileinfo
           coverage: none
           tools: composer:v2
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Install dependencies and build assets
+        run: |
+          npm ci --ignore-scripts
+          npm run build
 
       - name: Install composer dependencies
         run: composer install --prefer-dist --no-interaction --no-progress

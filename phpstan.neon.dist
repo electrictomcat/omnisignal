@@ -11,3 +11,5 @@ parameters:
         - packages/php-sdk/src
     excludePaths:
         - packages/php-sdk/vendor (?)
+    bootstrapFiles:
+        - vendor/larastan/larastan/bootstrap.php

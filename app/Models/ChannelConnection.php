@@ -42,7 +42,7 @@ class ChannelConnection extends Model
     /**
      * Keep credentials out of anything that serialises the model by accident.
      *
-     * @var array<int, string>
+     * @var list<string>
      */
     protected $hidden = ['credentials'];
 
